@@ -1,4 +1,4 @@
-# ARC
+# ARC-Core
 
 **Adaptive Reasoning Core** — a deterministic event kernel for signal intake, proposal flow, state tracking, branch simulation, and authority-gated execution.
 
