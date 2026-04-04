@@ -1,293 +1,248 @@
 # ARC-Core
 
-**Adaptive Reasoning Core** — a deterministic event kernel for signal intake, proposal flow, state tracking, branch simulation, and authority-gated execution.
+**Adaptive Reasoning Core** is a deterministic event-and-decision kernel for ingesting signals, resolving entities, building graph state, managing cases, simulating proposals, handling geospatial overlays, and enforcing authority-gated execution.
 
-This repository is the early ARC signal-intelligence scaffold: a lightweight foundation for ingesting entities and relationships, storing signal history, detecting spikes, exposing basic API routes, and rendering a minimal console surface. It is the beginning of a much larger architecture where ARC becomes the canonical kernel underneath future systems such as Lucid Terminal, Synth visualization, and proposal-driven worker execution.
+This repository is the **system-of-record layer** in the wider Gary Doman ecosystem. It is the kernel that future operator surfaces, visualization layers, autonomous runtimes, archive systems, and Synth-grade cognition interfaces are meant to sit on top of.
 
----
+## What this repository is
 
-## Origins & Inspiration
+ARC-Core is not a generic chat wrapper and not a freeform agent shell.
 
-ARC is conceptually modeled after the **ARC worldwide information surveillance / coordination system** depicted in **Continuum**, the sci-fi series set against a heavily surveilled **2077-era future**.
-
-In that fiction, ARC represents a global intelligence layer that can:
-
-- ingest massive streams of world information
-- correlate entities, events, and threat signals
-- surface guidance and operational insight in real time
-- function as a persistent coordination and surveillance backbone
-
-This repository is **not a direct recreation of the fictional system**. It is a real-world infrastructure experiment inspired by the same core idea:
-
-> build an auditable, structured, deterministic intelligence core that can observe signals, track state, propose actions, and gate execution under authority.
-
-Where the fictional ARC is cinematic and all-encompassing, this ARC is being built as an engineering system with:
-
-- explicit schemas
-- replayable transitions
-- receipts and validation
-- bounded workers
-- human-supervised execution
-- optional model augmentation instead of model authority
-
----
-
-## What ARC is
-
-ARC is being built as an **infrastructure-first cognition engine**, not just another chat wrapper.
-
-The long-term role of ARC is to provide:
-
-- deterministic intake and processing of events
-- canonical event schema and receipt logging
-- proposal lifecycle handling
+It is a structured intelligence-console foundation built around:
+- canonical events
 - replayable state transitions
-- branch simulation and rollback support
-- bounded worker execution with proof bundles
-- authority-gated actions instead of freeform model control
-- an event-memory graph that can outlive any single language model
+- entity and graph tracking
+- proposal workflows
+- case management
+- analyst notes
+- tamper-evident receipts
+- authority-gated actions
+- geospatial structures, geofences, tracks, and evidence export
+- optional model augmentation without surrendering canonical control
 
-In that architecture, language models are optional augmenters. ARC remains the stable core.
+In practical terms, this repo currently ships a working **FastAPI-backed ARC console prototype** with HTML dashboard pages, SQLite persistence, test coverage, auth/session flows, proposals, watchlists, cases, connectors, notebook entries, receipts, and indoor-geospatial estimation primitives.
 
----
+## Why ARC-Core matters in the larger stack
 
-## Current repository scope
+The wider stack is not meant to be a pile of disconnected repos. ARC-Core is the truth spine that gives the rest of the ecosystem shared memory, bounded execution, and structured authority.
 
-The current package is a **minimal signal console prototype**. It includes:
+### Related repositories in the stack
 
-- a queue-driven worker loop
-- an in-memory signal store for entities and relationships
-- a signal engine that records observed entities and edges
-- a simple trend detector for recent spike detection
-- a source influence weighting stub
-- a FastAPI route for reading entity signal history
-- basic HTML console pages for dashboard and signal monitoring
+- [Proto-AGI](https://github.com/GareBear99/Proto-AGI) — broader AGI architecture framing and ecosystem doctrine
+- [ARC-Core](https://github.com/GareBear99/ARC-Core) — canonical event, graph, proposal, case, and receipt kernel
+- [ARC-Turbo-OS](https://github.com/GareBear99/ARC-Turbo-OS) — seeded runtime / branch-aware execution direction for turbo resolution and reusable computation
+- [Arc-RAR](https://github.com/GareBear99/Arc-RAR) — native archive / package / transfer layer for moving deterministic state and artifacts across systems
+- [Proto-Synth_Grid_Engine](https://github.com/GareBear99/Proto-Synth_Grid_Engine) — future embodiment / visualization / structured cognition surface
+- [Seeded-Universe-Recreation-Engine](https://github.com/GareBear99/Seeded-Universe-Recreation-Engine) — long-range seeded simulation target where ARC-style truth handling becomes critical
+- [LuciferAI_Local](https://github.com/GareBear99/LuciferAI_Local) — local model/runtime experimentation layer that can plug into ARC without replacing ARC authority
+- [AGI_Photon-Quantum-Computing](https://github.com/GareBear99/AGI_Photon-Quantum-Computing) — future compute substrate and SSOT-oriented control theory for high-speed cognition infrastructure
 
-This means the repo is currently a **kernel seed / scaffold**, not the full ARC vision yet.
+### Stack role
 
----
+```text
+AGI_Photon-Quantum-Computing
+        ↓
+ARC-Turbo-OS
+        ↓
+ARC-Core
+        ↓
+LuciferAI_Local / model adapters / bounded workers
+        ↓
+Proto-Synth_Grid_Engine
+        ↓
+Seeded-Universe-Recreation-Engine / future ARC-native applications
+```
 
-## Included structure
+ARC-Core sits in the middle because it owns:
+- event truth
+- receipt chains
+- case/proposal lifecycle
+- authority boundaries
+- canonical graph state
+- branchable reasoning inputs
+- evidence export
+
+## Current feature surface
+
+The current repository contains a functional prototype with the following major areas:
+
+### API and application surface
+- FastAPI service entrypoint
+- CORS-controlled demo mode
+- mounted HTML UI
+- health and manifest endpoints
+- auth bootstrap, login, and session resolution
+
+### Event and graph pipeline
+- event ingest and listing
+- entity resolution and normalization
+- entity details with related events and notes
+- graph snapshots
+- timeline views
+- risk-score prioritization
+
+### Analyst workflow
+- watchlists
+- cases
+- case-event attachment
+- proposals
+- approval flow
+- notebook / notes
+
+### Evidence and trust
+- audit log
+- tamper-evident receipt chain
+- receipt verification endpoint
+- signed receipt support
+- evidence export bundle
+
+### Connector and ingest extensions
+- filesystem JSONL connector sources
+- connector polling and run history
+- demo feed bootstrap
+
+### Geospatial / spatial intelligence surface
+- structures and sensors
+- geofences
+- blueprint overlays
+- calibration profiles
+- track estimation
+- track import
+- latest tracks
+- heatmap generation
+- incident creation and listing
+- evidence pack export
+
+### UI pages included
+- dashboard
+- signals
+- graph
+- timeline
+- cases
+- geo
+
+## Read-first audit summary
+
+This package was read and inventoried before documentation changes.
+
+### Code-surface counts
+- **39 Python files** in the reconstructed working package
+- **161 functions**
+- **18 classes**
+- **13 passing tests** after reconstruction of the split bundle
+
+### Important repo reality
+The root zip includes both:
+- a lightweight visible top-level scaffold, and
+- a **split-bundle package** that contains the full working ARC console implementation.
+
+The complete working repo is reconstructed by combining the split bundle parts inside `ARC-Core_GitHub_split_bundle/`.
+
+That is why this README now documents the **actual full code surface**, not just the minimal root scaffold.
+
+## Repository structure
 
 ```text
 ARC-Core-main/
 ├── README.md
-└── ARC_Console_v3_0_Signal_Intelligence.zip
-    ├── worker_engine.py
-    ├── arc/
-    │   ├── api/
-    │   │   └── signals_api.py
-    │   └── signals/
-    │       ├── signal_engine.py
-    │       ├── signal_store.py
-    │       ├── trend_detector.py
-    │       └── influence_engine.py
-    └── ui/
-        ├── dashboard.html
-        └── signals.html
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── CODE_SURFACE_AUDIT.md
+│   ├── REPO_SETUP_CHECKLIST.md
+│   ├── SEO_PROMOTION.md
+│   └── STACK.md
+├── ARC_Console/
+│   ├── arc/
+│   │   ├── api/
+│   │   ├── core/
+│   │   ├── geo/
+│   │   ├── services/
+│   │   └── ui/
+│   ├── data/
+│   ├── tests/
+│   ├── run_arc.py
+│   └── requirements.txt
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   ├── pull_request_template.md
+│   └── workflows/ci.yml
+└── ARC-Core_GitHub_split_bundle/
+    └── split upload parts for GitHub-safe assembly
 ```
 
----
+## How to run
 
-## Current flow
+### Local setup
 
-```text
-Data/Input
-   ↓
-Queue
-   ↓
-Worker Engine
-   ↓
-Signal Pipeline
-   ↓
-Signal Store
-   ↓
-Trend / Influence Logic
-   ↓
-API Surface
-   ↓
-ARC Console UI
+```bash
+cd ARC_Console
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python run_arc.py
 ```
 
-This is the stripped-down seed of the wider ARC architecture.
+Then open:
+- `http://127.0.0.1:8000/`
+- `http://127.0.0.1:8000/ui/dashboard.html`
 
----
+### Test suite
 
-## Core modules
-
-### `worker_engine.py`
-Simple queue consumer that continuously pops items and runs them through a pipeline.
-
-### `arc/signals/signal_store.py`
-In-memory storage for:
-- entity timestamps
-- relationship timestamps
-
-### `arc/signals/signal_engine.py`
-Records entities and relationships into the signal store.
-
-### `arc/signals/trend_detector.py`
-Basic spike detector that flags when enough events occur inside a time window.
-
-### `arc/signals/influence_engine.py`
-Weighting stub for source priority / trust / impact.
-
-### `arc/api/signals_api.py`
-FastAPI route for fetching stored signal data by entity.
-
-### `ui/dashboard.html`
-Minimal dashboard shell for future ARC console expansion.
-
-### `ui/signals.html`
-Simple signal monitor page that fetches signal data from the API.
-
----
-
-## ARC philosophy
-
-Most AI systems today are built backward:
-- model first
-- infrastructure second
-- determinism optional
-- memory fragile
-- action safety bolted on later
-
-ARC is being built the opposite way:
-- canonical state first
-- deterministic handling first
-- replay and audit first
-- worker bounds first
-- authority and validation first
-- model assistance later
-
-That makes ARC suitable for:
-- intelligence consoles
-- business operations engines
-- agent systems with constrained execution
-- signal/event monitoring
-- timeline reconstruction
-- proposal and receipt systems
-- future synthetic cognition layers
-
----
-
-## Long-term target architecture
-
-```text
-Input / Event Sources
-        ↓
-Canonical Event Schema
-        ↓
-Proposal Lifecycle
-        ↓
-Receipt Ledger
-        ↓
-State Tree
-        ↓
-Branch Engine
-        ↓
-Worker Plane
-        ↓
-Proof Bundles
-        ↓
-Replay / Rollback
-        ↓
-Synth Visualization Layer
-        ↓
-Optional LLM Reasoning Layer
+```bash
+cd ARC_Console
+pytest -q
 ```
 
-This repo is an early step toward that system.
+## What makes ARC-Core different
 
----
+Most “AI agent” repos start with a model and improvise the rest.
 
-## Relationship to the wider stack
-
-ARC is the kernel layer in a larger system direction:
-
-```text
-ARC
-│
-├── Lucid Terminal
-│   deterministic operator interface
-│
-├── Synth
-│   visualization / embodiment layer
-│
-└── Future ARC-native cognition layer
-    structured reasoning augmentation without canonical state authority
-```
-
-ARC owns:
-
-- truth handling
-- canonical state
-- proposals
-- validation
+ARC-Core starts with:
+- state
+- schema
+- auditability
+- replay
 - receipts
-- branchable decision paths
-- execution authority boundaries
+- bounded execution
+- approval lanes
+- evidence
 
-Other layers may visualize, assist, or propose — but ARC remains the system of record.
+That makes it useful for:
+- signal intelligence consoles
+- deterministic agent infrastructure
+- operator dashboards
+- case and proposal systems
+- geospatial incident tracking
+- structured memory backbones
+- future synthetic cognition runtimes
 
----
+## Recommended GitHub description
 
-## Planned next upgrades
+**Deterministic event, graph, proposal, case, receipt, and geospatial intelligence kernel for the wider ARC / Synth / Lucifer ecosystem.**
 
-Recommended next implementation order:
+## Recommended GitHub topics
 
-1. **Canonical event schema**
-   - typed event envelope
-   - IDs, timestamps, actor/source, payload, signature fields
+`agi, arc, signal-intelligence, cognitive-architecture, deterministic-systems, fastapi, event-sourcing, graph, geospatial, case-management, receipts, system-of-record`
 
-2. **Receipt ledger**
-   - append-only journal for accepted actions and state transitions
+## Roadmap direction
 
-3. **Proposal model**
-   - proposed → validated → approved → executed → receipted lifecycle
+Near-term next steps:
+1. unify the split-bundle packaging into a cleaner default checkout experience
+2. add explicit event schema docs and end-to-end examples
+3. expose richer operator workflows around proposals and evidence review
+4. add stronger visuals/screenshots/gifs for public discoverability
+5. extend connectors beyond filesystem JSONL
+6. deepen branch simulation and rollback semantics
+7. connect ARC-Core more directly to ARC-Turbo-OS and Synth runtime surfaces
 
-4. **State tree**
-   - explicit deterministic state snapshots and transition handlers
+## Documentation map
 
-5. **Branch engine**
-   - simulate alternate outcomes without mutating canonical state
+- [Architecture overview](docs/ARCHITECTURE.md)
+- [Full ecosystem stack](docs/STACK.md)
+- [Code-surface audit](docs/CODE_SURFACE_AUDIT.md)
+- [SEO and promotion guide](docs/SEO_PROMOTION.md)
+- [Repo setup checklist](docs/REPO_SETUP_CHECKLIST.md)
 
-6. **Worker contract**
-   - bounded execution rules, receipts, artifacts, proof bundles
+## License
 
-7. **Console expansion**
-   - signal graphs
-   - event radar
-   - state explorer
-   - receipt timeline
-   - branch comparison UI
-
-8. **Persistence layer**
-   - replace in-memory storage with durable backing store
-
-9. **Validation + policy layer**
-   - authority gating
-   - policy rules
-   - non-fatal/fatal violation surfaces
-
-10. **Synth integration**
-   - visual state projection only
-   - no execution authority in the visual layer
-
----
-
-## Project goal
-
-ARC explores how to build a **real-world deterministic intelligence framework** inspired by fictional systems like the ARC network in *Continuum*, while remaining transparent, auditable, replayable, and developer-controlled.
-
-The long-term target is not “a chatbot with memory.”
-
-It is:
-
-- a signal and event kernel
-- a proposal and validation engine
-- a truth/state authority layer
-- a branch simulation system
-- a foundation for future structured machine cognition
-
-In plain terms: **ARC is intended to become the core system that watches, understands, proposes, validates, and records — before anything acts.**
+MIT
