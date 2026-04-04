@@ -105,7 +105,7 @@ def auth_session(authorization: str | None = Header(default=None)):
 @router.post("/api/events")
 def post_event(event: EventIn, role: str = Depends(role_observer)):
     out = create_event(event)
-    log(role, "create_event", out.id, out.dict())
+    log(role, "create_event", out.id, out.model_dump())
     return out
 
 
@@ -210,7 +210,7 @@ def post_proposal(prop: ProposalIn, role: str = Depends(role_operator)):
         row = conn.execute("SELECT risk_score FROM entities WHERE entity_id = ?", (prop.target_id,)).fetchone()
         risk_score = float(row["risk_score"]) if row else 20.0
     out = create_proposal(prop, created_by_role=role, risk_score=risk_score)
-    log(role, "create_proposal", out.proposal_id, out.dict())
+    log(role, "create_proposal", out.proposal_id, out.model_dump())
     return out
 
 
@@ -220,7 +220,7 @@ def post_approve(proposal_id: str, role: str = Depends(role_approver)):
         out = approve_proposal(proposal_id)
     except KeyError:
         raise HTTPException(status_code=404, detail="Proposal not found")
-    log(role, "approve_proposal", proposal_id, out.dict())
+    log(role, "approve_proposal", proposal_id, out.model_dump())
     return out
 
 
@@ -374,7 +374,7 @@ def geo_heatmap(structure_id: str, grid_size: int = Query(default=8, ge=2, le=MA
 
 @router.post("/api/geo/blueprints")
 def post_blueprint(item: BlueprintOverlayIn, role: str = Depends(role_analyst)):
-    out = upsert_blueprint_overlay(**item.dict())
+    out = upsert_blueprint_overlay(**item.model_dump())
     log(role, "upsert_blueprint_overlay", out["overlay_id"], out)
     return out
 
@@ -386,7 +386,7 @@ def get_blueprints(structure_id: str | None = None):
 
 @router.post("/api/geo/calibrations")
 def post_calibration(item: CalibrationProfileIn, role: str = Depends(role_analyst)):
-    out = create_calibration_profile(**item.dict())
+    out = create_calibration_profile(**item.model_dump())
     log(role, "upsert_calibration_profile", out["profile_id"], out)
     return out
 
@@ -398,7 +398,7 @@ def get_calibrations(structure_id: str | None = None):
 
 @router.post("/api/geo/import-tracks")
 def post_import_tracks(item: TrackImportIn, role: str = Depends(role_observer)):
-    out = import_track_points(item.subject, item.structure_id, item.source, [tp.dict() for tp in item.track_points])
+    out = import_track_points(item.subject, item.structure_id, item.source, [tp.model_dump() for tp in item.track_points])
     log(role, "import_tracks", item.subject, {"count": out["imported_count"], "structure_id": item.structure_id})
     return out
 

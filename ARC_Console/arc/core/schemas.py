@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any, Literal
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from datetime import datetime, timezone
 import uuid
 
@@ -85,7 +85,10 @@ class StructureIn(BaseModel):
     levels: int = Field(default=1, ge=1, le=100)
     polygon: list[list[float]]
 
-    _polygon = validator("polygon", allow_reuse=True)(_validate_polygon_points)
+    @field_validator("polygon")
+    @classmethod
+    def validate_polygon(cls, value: list[list[float]]) -> list[list[float]]:
+        return _validate_polygon_points(value)
 
 
 class GeofenceIn(BaseModel):
@@ -95,7 +98,10 @@ class GeofenceIn(BaseModel):
     polygon: list[list[float]]
     severity: int = Field(default=6, ge=1, le=10)
 
-    _polygon = validator("polygon", allow_reuse=True)(_validate_polygon_points)
+    @field_validator("polygon")
+    @classmethod
+    def validate_polygon(cls, value: list[list[float]]) -> list[list[float]]:
+        return _validate_polygon_points(value)
 
 
 class ObservationIn(BaseModel):
@@ -109,7 +115,7 @@ class TrackEstimateIn(BaseModel):
     structure_id: str = Field(min_length=1, max_length=160)
     source: str = Field(default="manual", min_length=1, max_length=120)
     floor: int | None = Field(default=None, ge=-5, le=300)
-    observations: list[ObservationIn] = Field(min_items=1, max_items=64)
+    observations: list[ObservationIn] = Field(min_length=1, max_length=64)
 
 
 class BlueprintOverlayIn(BaseModel):
@@ -147,7 +153,7 @@ class TrackImportIn(BaseModel):
     subject: str = Field(min_length=1, max_length=160)
     structure_id: str = Field(min_length=1, max_length=160)
     source: str = Field(default="import", min_length=1, max_length=120)
-    track_points: list[ImportedTrackPointIn] = Field(min_items=1, max_items=1000)
+    track_points: list[ImportedTrackPointIn] = Field(min_length=1, max_length=1000)
 
 
 class IncidentIn(BaseModel):
@@ -177,13 +183,18 @@ class NoteIn(BaseModel):
     subject_id: str = Field(min_length=1, max_length=160)
     title: str = Field(min_length=1, max_length=160)
     body: str = Field(min_length=1, max_length=8000)
-    tags: list[str] = Field(default_factory=list, max_items=20)
+    tags: list[str] = Field(default_factory=list, max_length=20)
 
-    @validator("tags", each_item=True)
-    def clean_tags(cls, value: str) -> str:
-        tag = value.strip().lower()
-        if not tag:
-            raise ValueError("Tags cannot be empty")
-        if len(tag) > 40:
-            raise ValueError("Tag too long")
-        return tag
+    @field_validator("tags")
+    @classmethod
+    def clean_tags(cls, value: list[str]) -> list[str]:
+        cleaned: list[str] = []
+        for item in value:
+            tag = item.strip().lower()
+            if not tag:
+                raise ValueError("Tags cannot be empty")
+            if len(tag) > 40:
+                raise ValueError("Tag too long")
+            cleaned.append(tag)
+        return cleaned
+
