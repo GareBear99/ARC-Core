@@ -1,6 +1,8 @@
 # ARC-Core
 
-**Adaptive Reasoning Core** is a deterministic event-and-decision kernel for ingesting signals, resolving entities, building graph state, managing cases, simulating proposals, handling geospatial overlays, and enforcing authority-gated execution. Inspired by ARC from the TV series 'Continuum'
+**Adaptive Reasoning Core** is a deterministic event-and-decision kernel for ingesting signals, resolving entities, building graph state, managing cases, simulating proposals, handling geospatial overlays, and enforcing authority-gated execution. 
+
+Inspired by ARC from the TV series 'Continuum'
 
 This repository is the **system-of-record layer** in the wider Gary Doman ecosystem. It is the kernel that future operator surfaces, visualization layers, autonomous runtimes, archive systems, and Synth-grade cognition interfaces are meant to sit on top of.
 
