@@ -2,7 +2,7 @@
 
 **Adaptive Reasoning Core** is a deterministic event-and-decision kernel for ingesting signals, resolving entities, building graph state, managing cases, simulating proposals, handling geospatial overlays, and enforcing authority-gated execution. 
 
-Inspired by ARC OS from the TV series 'Continuum' filmed in Vancouver B.C.
+Inspired by ARC-OS (2077) from the TV series 'Continuum' filmed in Vancouver B.C.
 
 This repository is the **system-of-record layer** in the wider Gary Doman ecosystem. It is the kernel that future operator surfaces, visualization layers, autonomous runtimes, archive systems, and Synth-grade cognition interfaces are meant to sit on top of.
 
