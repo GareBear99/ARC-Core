@@ -71,6 +71,7 @@ All seven repos share one author and one funding target: [github.com/sponsors/Ga
 
 Full per-repo integration contracts: [**ECOSYSTEM.md**](./ECOSYSTEM.md).
 Deep technical reference (every module, table, algorithm, and endpoint): [**docs/ARCHITECTURE.md**](./docs/ARCHITECTURE.md).
+Deep dive on the *Continuum* ARC / Alec Sadler's CMR, competitor comparison, gap analysis, and roadmap: [**docs/CONTINUUM_COMPARISON.md**](./docs/CONTINUUM_COMPARISON.md).
 
 ### And beyond the core ecosystem — consumer applications using ARC-Core
 
@@ -83,8 +84,33 @@ ARC-Core's discipline is also used as the authority/receipt backbone for several
 | **🎨 Proto-Synth Grid Engine** | [Proto-Synth_Grid_Engine](https://github.com/GareBear99/Proto-Synth_Grid_Engine) | Carries an `ARC_CORE_AUDIT_v44.txt` audit artifact. Blueprint events, grid mutations, module attachment, simulation-loop tick receipts, save-file event logs, Voxel/Neural-Synth sync, authority-gated mutations, audit trail |
 | **🔭 Neo-VECTR Solar Sim (NASA Standard)** | [Neo-VECTR_Solar_Sim_NASA_Standard](https://github.com/GareBear99/Neo-VECTR_Solar_Sim_NASA_Standard) | Truth-pack receipt chain (every celestial object has provenance), event-sourced navigation, authority over what counts as "proven" (NASA standard), deterministic universe-graph replay |
 | **🎵 TizWildin Entertainment Hub** | [TizWildinEntertainmentHUB](https://github.com/GareBear99/TizWildinEntertainmentHUB) | **Entire plugin-ecosystem backend** — entitlement receipts (who owns which plugin), seat-assignment audit trail, Stripe billing event log, GitHub release-polling event chain, authority-gated activation, support-case management, and orchestration for **14 JUCE audio plugins** (FreeEQ8, PaintMask, WURP, AETHER, WhisperGate, Therum, Instrudio, BassMaid, SpaceMaid, GlueMaid, MixMaid, ChainMaid, RiftWave Suite, FreeSampler) |
+| **🏠 RAG Command Center** | [RAG-Command-Center](https://github.com/GareBear99/RAG-Command-Center) | Full-stack real estate intelligence platform (Victoria, BC ops + Canada-wide listings). Signal compile = event ingest + fingerprint dedupe; 0–100 deal/lead scores = explainable linear `score_event` analog; pipeline kanban = proposal → evidence → receipt → approval; licensed-area routing = authority gating; hot/warm/cold/stale decay = sliding-window risk; Cloudflare Worker hourly cron = connector-poll; SHA-256 auth on command-center surface. |
+| **🤖 Robotics Master Controller** | [Robotics-Master-Controller](https://github.com/GareBear99/Robotics-Master-Controller) | Robotics research hub (prosthetics, actuation, fabrication, exoskeleton). Portfolio surface today; architectural spec for any future control stack: actuator commands (fingerprint dedupe), sensor streams (event sourcing), motor/E-stop (authority gating), fabrication jobs (proposal lifecycle), safety incidents (`incident` receipts + geofence generalization), evidence export for safety review. |
+| **📈 Currency / arbitrage bots** | [BrokeBot](https://github.com/GareBear99/BrokeBot) · [Doman.ai_Arbritrage_Bot](https://github.com/GareBear99/Doman.ai_Arbritrage_Bot) | **Currently empty repos**; no code yet. Planned integration (honest status): market tick = event; order = proposal with simulated PnL; fill = receipt; API key = scoped `auth_user`; risk limits = `require_role("approver", …)`; backtest = deterministic replay. |
 
-ARC-Core is the authority backbone for **all** of the above. Every player action, seed event, grid mutation, celestial fact, plugin activation, and billing transaction is an ARC-Core-shaped event with a receipt.
+ARC-Core is the authority backbone for **all** of the above. Every player action, seed event, grid mutation, celestial fact, plugin activation, billing transaction, real-estate lead, and (future) actuator command or order fill is an ARC-Core-shaped event with a receipt.
+
+---
+
+## ⚔️ How ARC-Core compares
+
+The honest competitor table. "Category" = *signal-intelligence event spines with receipts, authority, replay, and analyst UI* — not plain logging, SIEM, or time-series DBs.
+
+| Product | Receipt/chain? | Authority gating | Open-source | Per-event cost | Single-author? |
+|---|---|---|---|---|---|
+| **ARC-Core v6.0.0** | ✅ SHA-256 + HMAC chain, externally verifiable | 5-rung role ladder + PBKDF2 + shared-token | **MIT** | free | **Yes (Gary Doman)** |
+| Palantir Gotham | Internal audit log, not externally verifiable | RBAC + ABAC | No | $1M+/yr seats | No |
+| Anduril Lattice | Not public | Mission roles | No | Enterprise/gov | No |
+| AWS QLDB | ✅ Merkle-tree digest | IAM | No | ~$0.03/1M requests + storage | No |
+| Rekor (Sigstore) | ✅ Public transparency log | Sigstore identity | Apache 2 | free | No (CNCF) |
+| HashiCorp Vault | ✅ HMAC audit chain (secrets-scoped) | Policies | BSL | Enterprise | No |
+| Splunk / Elastic SIEM | Audit logs, not chained | RBAC | Partial | Per-GB-day / tiered | No |
+| Grafana Loki/Tempo, OpenTelemetry/Jaeger | ❌ no chain | External | Apache 2 | free self-host | No |
+| Hyperledger Fabric | ✅ full blockchain | MSP + channels | Apache 2 | Complex deploy | No |
+
+**What "quality" means here** (not feature count): (1) every state change emits a receipt; (2) chain is externally verifiable; (3) authority is explicit; (4) replay is deterministic; (5) identity is canonical; (6) evidence is portable. Palantir has 1-5 + a version of 6. Rekor / Vault / QLDB have 1-2 scoped to narrow domains. **ARC-Core has 1-6 in one MIT-licensed repo.** The defensible position is the intersection — open-source-solo, multi-domain, single author.
+
+For the full capability matrix against **Alec Sadler's ARC in *Continuum*** and the 2025 commercial field, plus the concrete v7-v10 roadmap to Alec-mode: see [**docs/CONTINUUM_COMPARISON.md**](./docs/CONTINUUM_COMPARISON.md).
 
 ---
 
