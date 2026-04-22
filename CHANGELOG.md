@@ -7,7 +7,7 @@ All notable changes to ARC-Core are documented here. Format follows [Keep a Chan
 ## [Unreleased] — Ecosystem Documentation Pass
 
 ### Added
-- `ECOSYSTEM.md` — per-repo integration contracts describing exactly where ARC-Core is used and what each of the six sibling repos (Cleanroom Runtime, Cognition Core, LLMBuilder, Language Module, OmniBinary, Arc-RAR) uses it for.
+- `ECOSYSTEM.md` — per-repo integration contracts describing exactly where ARC-Core is used and what each of the six sibling repos (Cleanroom Runtime, Cognition Core, LLMBuilder, Language Module, OmniBinary, Arc-RAR) uses it for, **plus five consumer applications** (Rift Ascent, Seeded Universe Recreation Engine, Proto-Synth Grid Engine, Neo-VECTR Solar Sim, TizWildin Entertainment Hub — which orchestrates 14 JUCE audio plugins).
 - `.github/FUNDING.yml` — GitHub Sponsors button pointing to `@GareBear99`.
 - `.github/ISSUE_TEMPLATE/` — structured issue forms (bug, feature, docs) plus contact-links config routing to Discussions, Ecosystem, Security, and Sponsor.
 - `.github/pull_request_template.md` — role-boundary preservation checklist.
