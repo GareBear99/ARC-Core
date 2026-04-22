@@ -328,6 +328,94 @@ Every fleet repo also publishes a live GitHub Pages docs site (served from `main
 
 ---
 
+## 🔮 Future development plans — ARC-Core roadmap
+
+These four repos are **research-grade scaffolds** positioned to become ARC-Core's next production integrations. Each one extends the kernel's five primitives (event / entity / edge / proposal / receipt) into a new surface. None of them are in production today; the doctrine and the repos both exist.
+
+### 1. ARC-Turbo-OS — deterministic execution runtime (2×–100× OS speed-ups)
+
+**Repo**: [ARC-Turbo-OS](https://github.com/GareBear99/ARC-Turbo-OS)
+
+**Vision**: Turn every OS task into a **canonical problem graph**, cache resolved outputs by their canonical identity, and reuse them on subsequent runs. Potentially 2× to 100+× faster OS-level execution for workloads with any repeatable structure.
+
+**What ARC-Core will provide**
+- **Canonical-graph events** — the hash of a problem graph *is* ARC-Core's event identity. Two identical problem graphs in different runs share one event.
+- **Resolved-output reuse = receipt reuse** — cached outputs become receipts addressable by `state_at(event_id)`. A Turbo OS run is either "here's a fresh receipt" or "here's the receipt I produced last time, verifiable against the chain".
+- **Authority-gated dispatch** — which execution lane runs a task (native, JIT, sandboxed) is an authority decision with an audit trail.
+- **Externally-verifiable speedups** — because every cached answer is a receipt, Turbo OS's speed claims can be verified from outside the runtime without trusting Turbo OS itself.
+
+**Where the boundary sits**
+- **ARC-Core owns**: event identity, receipt chain, authority primitive, deterministic replay contract.
+- **ARC-Turbo-OS owns**: the canonical-graph transformer, the resolved-output cache, the dispatch lanes, the OS-level integration.
+
+---
+
+### 2. Proto-AGI — persistent, memory-backed, tool-using loop
+
+**Repo**: [Proto-AGI](https://github.com/GareBear99/Proto-AGI)
+
+**Vision**: A practical architecture for moving from a local assistant/controller toward a **persistent, memory-backed, tool-using proto-AGI loop** — the bridge between a stateless chatbot and a governed long-running agent.
+
+**What ARC-Core will provide**
+- **Persistent memory = event log** — the agent's memory is an ARC-Core append-only event log. Memory never mutates in place; it accumulates.
+- **Tool calls = proposals** — every tool invocation carries arguments, an authority claim, and enters the proposal pipeline before it executes.
+- **Tool returns = receipts** — every return value is a receipt linked back to its proposal. Failure modes are receipts too.
+- **Session replay** — any session can be reconstructed by replaying its slice of the event log, with authority pinned to the originating session's role.
+- **No forged history** — because the chain is tamper-evident, the agent cannot rewrite its own past to escape a governance decision.
+
+**Where the boundary sits**
+- **ARC-Core owns**: event log, receipt shape, authority primitive, replay semantics.
+- **Proto-AGI owns**: the reasoning loop, the tool registry, the memory retrieval policy, the action selection logic.
+
+---
+
+### 3. AGI_Photon-Quantum-Computing — Photon AGI thinking core + SSOT bot lab
+
+**Repo**: [AGI_Photon-Quantum-Computing](https://github.com/GareBear99/AGI_Photon-Quantum-Computing)
+
+**Vision**: Production dossier for a **Photon AGI thinking core** paired with a **SSOT (single source of truth) bot lab** that produces candidate cognition modules and promotes them under governance.
+
+**What ARC-Core will provide**
+- **SSOT is the ARC-Core primitive** — the entire kernel is built around "one canonical record, receipt-verified". Photon's SSOT requirement maps onto ARC-Core directly.
+- **Thinking steps = events** — each step of photon-flavoured cognition is an event with a SHA-256 identity.
+- **Candidate promotion = Gate-v2 flow** — promoting a thinking-core candidate follows the same proposal / evidence / receipt discipline LLMBuilder's Gate v2 uses today, extended to the photon lane.
+- **Benchmark receipts** — every experiment in the bot lab emits a receipt: inputs, outputs, scoring, canonical identity, authority. Benchmarks are replayable by construction.
+
+**Where the boundary sits**
+- **ARC-Core owns**: SSOT primitive, receipt chain, authority contract, event identity rules.
+- **AGI_Photon-Quantum-Computing owns**: the photon cognition model, the thinking-core architecture, the bot-lab harness, the scorers, the promotion doctrine.
+
+---
+
+### 4. A-real-time-spatial-signal-intelligence-engine — geospatial signal intelligence
+
+**Repo**: [A-real-time-spatial-signal-intelligence-engine](https://github.com/GareBear99/A-real-time-spatial-signal-intelligence-engine)
+
+**Vision**: Google Earth + WiFi / RF analysis + device tracking + physics simulation + satellite imagery, fused into a single real-time spatial intelligence surface. This is the natural upgrade path for ARC-Core's existing geospatial primitives.
+
+**What ARC-Core will provide (today's kernel already has most of this)**
+- **Geo-tagged events** — every RF / WiFi / satellite reading is an event with a position, timestamp, and provenance. ARC-Core's geospatial layer already handles structures / sensors / geofences / blueprints / calibration / tracks / incidents.
+- **Device identity over time** — a moving device becomes an ARC-Core entity; its track is a sequence of events with a stable identity.
+- **Geofence triggers = authority gates** — entering / exiting a zone of interest is an authority event. Incidents are first-class receipt-producing entities.
+- **Physics-sim replay** — propagating signals through terrain / atmosphere is a deterministic replay of the event stream through a solver. If the inputs replay, the outputs must replay.
+- **Evidence export** — any investigation can export a portable, receipt-verifiable evidence pack covering a geographic + temporal window.
+
+**Where the boundary sits**
+- **ARC-Core owns**: the geospatial primitive set, entity identity, receipt chain, evidence-pack format.
+- **A-real-time-spatial-signal-intelligence-engine owns**: the RF / WiFi analyzers, the satellite ingestion pipeline, the physics solver, the Google-Earth-grade visualization, the device-tracking correlator.
+
+---
+
+### Status and cadence
+
+These four repos are **explicitly roadmap**, not production. Each one will move into the core 7+15 picture in order once its ARC-Core integration lands:
+- Turbo OS moves first because OS-level speedups unblock every other surface.
+- Proto-AGI moves second because a persistent memory-backed loop is the substrate several other repos will depend on.
+- Photon + SSOT moves third (large-model-family compatible).
+- Spatial signal intelligence moves fourth because today's kernel already covers ~70% of its doctrine requirements; it needs integration work, not invention.
+
+---
+
 ## The consumer-application rule
 
 Consumer applications can use ARC-Core's discipline without being part of the governed-AI ecosystem. The rule is the same in both directions:

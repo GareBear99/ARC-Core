@@ -266,6 +266,27 @@ ARC-Core is the authority backbone for **all 15 repos above**. Every player acti
 
 ---
 
+## 🔮 Future development plans — four R&D repos on the ARC-Core roadmap
+
+ARC-Core's doctrine (event / entity / edge / proposal / receipt / authority / replay) is designed to scale up from a laptop-sized operator console to **four next-generation surfaces already scaffolded in dedicated repos**. These are the directions ARC-Core will grow into next, in priority order:
+
+| # | Repo | Future integration — what ARC-Core will provide |
+|---:|---|---|
+| 1 | [**ARC-Turbo-OS**](https://github.com/GareBear99/ARC-Turbo-OS) — deterministic execution runtime (2×–100× faster OS speeds via canonical problem graphs + resolved-output reuse) | Every OS-level task becomes a **canonical-graph event** with a SHA-256 identity. **Resolved-output cache = receipt reuse** across runs. **Dispatch to an execution lane = authority-gated proposal**. **Bit-for-bit re-execution = deterministic replay of the event log**. ARC-Core becomes the truth-of-what-ran layer behind Turbo OS's speedups, so the cached answers can be externally verified. |
+| 2 | [**Proto-AGI**](https://github.com/GareBear99/Proto-AGI) — practical architecture for a persistent, memory-backed, tool-using proto-AGI loop | **Persistent memory = the ARC-Core event log** (no mutation, only append). **Every tool call = a proposal with evidence**. **Every tool return = a receipt**. **Session replay = replay of the event log with authority pinned to the originating session**. ARC-Core supplies the non-negotiable substrate so the loop cannot silently lose its memory or forge its own history. |
+| 3 | [**AGI_Photon-Quantum-Computing**](https://github.com/GareBear99/AGI_Photon-Quantum-Computing) — Photon AGI thinking core + SSOT bot lab (production dossier) | **SSOT** (single source of truth) is the primitive ARC-Core was built to be. Photon's thinking steps become **events**; promotion of a thinking-core candidate becomes a **proposal → evidence → receipt** (the same Gate-v2 pattern LLMBuilder uses today, extended to the photon-flavoured cognition lane). Bot-lab benchmarks become **receipted experiments** with canonical identity. |
+| 4 | [**A-real-time-spatial-signal-intelligence-engine**](https://github.com/GareBear99/A-real-time-spatial-signal-intelligence-engine) — Google Earth + WiFi / RF analysis + device tracking + physics sim + satellite imagery | Every RF / WiFi reading and every satellite overlay becomes a **geo-tagged event** in the ARC-Core geospatial layer (structures / sensors / geofences / blueprints / calibration / tracks / incidents already exist in the kernel). **Device tracks = entity-identity over time**. **Geofence triggers = authority gates**. **Physics-sim propagation = deterministic replay of the event stream against a solver**. This is the natural upgrade path for ARC-Core's geospatial primitives. |
+
+### Why these, and why as "future" and not "core"
+
+The seven governed-AI repos and 15 consumer repos above are **production-oriented surfaces that already ship on ARC-Core discipline**. The four above are **research-grade scaffolds** — each carries meaningful prose, scaffolding, and vision, but is deliberately labelled roadmap so evaluators don't confuse R&D surface with production surface.
+
+The upgrade path is the same in every case: teach the future repo to emit events into ARC-Core's event log, pin its authority to ARC-Core's role ladder, and let the receipt chain become the external verifier for whatever the future repo is claiming (OS speedups, proto-AGI memory, photon cognition, RF provenance). The kernel does not change; the surface expands.
+
+Full per-repo integration contracts for the four future-plan repos: [**ECOSYSTEM.md § Future development plans**](./ECOSYSTEM.md#-future-development-plans--arc-core-roadmap).
+
+---
+
 ## ⚔️ How ARC-Core compares
 
 The honest competitor table. "Category" = *signal-intelligence event spines with receipts, authority, replay, and analyst UI* — not plain logging, SIEM, or time-series DBs.
