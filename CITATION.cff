@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+title: "ARC-Core: Deterministic Event, Graph, Proposal, Case, and Receipt Kernel"
+authors:
+  - family-names: Doman
+    given-names: Gary
+    affiliation: Independent
+message: "If you use ARC-Core in research or production, please cite the project metadata in this file."
+abstract: >-
+  ARC-Core is a deterministic event-and-receipt kernel for signal intelligence,
+  entity resolution, graph state, case management, proposal workflows,
+  geospatial overlays, and authority-gated execution. It is the root
+  authority layer in the seven-repo ARC governed-AI ecosystem; every sibling
+  repository (arc-lucifer-cleanroom-runtime, arc-cognition-core,
+  ARC-Neuron-LLMBuilder, arc-language-module, omnibinary-runtime, Arc-RAR)
+  embeds ARC-Core's event, receipt, and authority discipline.
+license: MIT
+repository-code: "https://github.com/GareBear99/ARC-Core"
+url: "https://github.com/GareBear99/ARC-Core"
+keywords:
+  - signal-intelligence
+  - event-sourcing
+  - receipt-chain
+  - cognitive-architecture
+  - deterministic-systems
+  - case-management
+  - geospatial-intelligence
+  - fastapi
+  - sqlite
+  - authority-gating
+  - arc-ecosystem
+  - governed-ai
+  - proto-agi

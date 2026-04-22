@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Ask a question (GitHub Discussions)
+    url: https://github.com/GareBear99/ARC-Core/discussions
+    about: "General questions, ecosystem integration discussion, operator workflow ideas."
+  - name: 📖 Documentation
+    url: https://github.com/GareBear99/ARC-Core#readme
+    about: "Read README, ECOSYSTEM, docs/ARCHITECTURE, docs/STACK before filing."
+  - name: 🌐 ARC Ecosystem
+    url: https://github.com/GareBear99/ARC-Core/blob/main/ECOSYSTEM.md
+    about: "How ARC-Core integrates with Cleanroom, Cognition Core, LLMBuilder, Language Module, OmniBinary, Arc-RAR."
+  - name: 🔐 Report a security vulnerability
+    url: https://github.com/GareBear99/ARC-Core/security/advisories/new
+    about: "Private security disclosures."
+  - name: 💖 Sponsor this work
+    url: https://github.com/sponsors/GareBear99
+    about: "Support ARC-Core and the six sibling ARC repos."

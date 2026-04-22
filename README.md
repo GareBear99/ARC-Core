@@ -1,250 +1,326 @@
 # ARC-Core
 
-**Adaptive Reasoning Core** is a deterministic event-and-decision kernel for ingesting signals, resolving entities, building graph state, managing cases, simulating proposals, handling geospatial overlays, and enforcing authority-gated execution. 
+**The authoritative event-and-receipt engine for the ARC governed-AI ecosystem — a deterministic kernel for signal intelligence, entity resolution, graph state, case management, proposal workflows, geospatial overlays, and authority-gated execution.**
 
-Inspired by ARC-OS (2067) from the TV series 'Continuum' filmed in Vancouver B.C.
+> Every receipt in the ARC ecosystem derives from ARC-Core's discipline. Inspired by ARC-OS (2067) from *Continuum*, built as the system-of-record layer that every other ARC repo can sign its decisions against.
 
-This repository is the **system-of-record layer** in the wider Gary Doman ecosystem. It is the kernel that future operator surfaces, visualization layers, autonomous runtimes, archive systems, and Synth-grade cognition interfaces are meant to sit on top of.
+<sub>**Topics**: signal intelligence · event sourcing · receipt chains · cognitive architecture · deterministic systems · case management · geospatial intelligence · FastAPI · SQLite · authority gating · ARC ecosystem · governed AI · operator console · Proto-AGI infrastructure</sub>
 
-## What this repository is
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-powered-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Tests: 13](https://img.shields.io/badge/tests-13%20passing-brightgreen.svg)](./ARC_Console/tests)
+[![Role: Authority Spine](https://img.shields.io/badge/role-authority%20spine-b60205)](./ECOSYSTEM.md)
+[![Ecosystem](https://img.shields.io/badge/ARC%20Ecosystem-7%20repos-orange)](./ECOSYSTEM.md)
+[![Sponsor](https://img.shields.io/badge/Sponsor-GareBear99-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/GareBear99)
 
-ARC-Core is not a generic chat wrapper and not a freeform agent shell.
+---
 
-It is a structured intelligence-console foundation built around:
-- canonical events
-- replayable state transitions
-- entity and graph tracking
-- proposal workflows
-- case management
-- analyst notes
-- tamper-evident receipts
-- authority-gated actions
-- geospatial structures, geofences, tracks, and evidence export
-- optional model augmentation without surrendering canonical control
+## 🌐 The ARC Ecosystem
 
-In practical terms, this repo currently ships a working **FastAPI-backed ARC console prototype** with HTML dashboard pages, SQLite persistence, test coverage, auth/session flows, proposals, watchlists, cases, connectors, notebook entries, receipts, and indoor-geospatial estimation primitives.
+ARC-Core is **the root authority** in a seven-repo governed-AI ecosystem. Every other repo depends on the event-and-receipt discipline defined here.
 
-## Why ARC-Core matters in the larger stack
+```mermaid
+flowchart TB
+    subgraph authority ["🏛️ Authority (you are here)"]
+        AC[🔐 ARC-Core<br/>event + receipt spine]
+    end
+    subgraph ops ["⚙️ Operational"]
+        CR[Cleanroom Runtime<br/>deterministic kernel]
+        CC[Cognition Core<br/>model-growth lab]
+    end
+    subgraph assembly ["🏭 Assembly"]
+        LLM[ARC-Neuron-LLMBuilder<br/>governed build loop]
+    end
+    subgraph substrate ["🧱 Substrate"]
+        LM[Language Module<br/>lexical truth]
+        OB[OmniBinary<br/>binary mirror]
+        AR[Arc-RAR<br/>archives + rollback]
+    end
 
-The wider stack is not meant to be a pile of disconnected repos. ARC-Core is the truth spine that gives the rest of the ecosystem shared memory, bounded execution, and structured authority.
+    AC ==>|every receipt| CR
+    AC ==>|every receipt| CC
+    AC ==>|every receipt| LLM
+    AC ==>|every receipt| LM
+    AC ==>|every receipt| OB
+    AC ==>|every receipt| AR
 
-### Related repositories in the stack
-
-- [Proto-AGI](https://github.com/GareBear99/Proto-AGI) — broader AGI architecture framing and ecosystem doctrine
-- [ARC-Core](https://github.com/GareBear99/ARC-Core) — canonical event, graph, proposal, case, and receipt kernel
-- [ARC-Turbo-OS](https://github.com/GareBear99/ARC-Turbo-OS) — seeded runtime / branch-aware execution direction for turbo resolution and reusable computation
-- [Arc-RAR](https://github.com/GareBear99/Arc-RAR) — native archive / package / transfer layer for moving deterministic state and artifacts across systems
-- [Proto-Synth_Grid_Engine](https://github.com/GareBear99/Proto-Synth_Grid_Engine) — future embodiment / visualization / structured cognition surface
-- [Seeded-Universe-Recreation-Engine](https://github.com/GareBear99/Seeded-Universe-Recreation-Engine) — long-range seeded simulation target where ARC-style truth handling becomes critical
-- [LuciferAI_Local](https://github.com/GareBear99/LuciferAI_Local) — local model/runtime experimentation layer that can plug into ARC without replacing ARC authority
-- [AGI_Photon-Quantum-Computing](https://github.com/GareBear99/AGI_Photon-Quantum-Computing) — future compute substrate and SSOT-oriented control theory for high-speed cognition infrastructure
-
-### Stack role
-
-```text
-AGI_Photon-Quantum-Computing
-        ↓
-ARC-Turbo-OS
-        ↓
-ARC-Core
-        ↓
-LuciferAI_Local / model adapters / bounded workers
-        ↓
-Proto-Synth_Grid_Engine
-        ↓
-Seeded-Universe-Recreation-Engine / future ARC-native applications
+    style AC fill:#b60205,stroke:#fff,color:#fff
+    style CR fill:#0e8a16,stroke:#fff,color:#fff
+    style CC fill:#1d76db,stroke:#fff,color:#fff
+    style LLM fill:#7057ff,stroke:#fff,color:#fff
+    style LM fill:#0075ca,stroke:#fff,color:#fff
+    style OB fill:#5319e7,stroke:#fff,color:#fff
+    style AR fill:#fbca04,color:#000
 ```
 
-ARC-Core sits in the middle because it owns:
-- event truth
-- receipt chains
-- case/proposal lifecycle
-- authority boundaries
-- canonical graph state
-- branchable reasoning inputs
-- evidence export
+### Where ARC-Core is used, and for what
 
-## Current feature surface
+| Repo | What it uses ARC-Core for |
+|---|---|
+| **[arc-lucifer-cleanroom-runtime](https://github.com/GareBear99/arc-lucifer-cleanroom-runtime)** | The deterministic kernel hosts its event log on ARC-Core semantics: every state transition is a proposal → evidence → receipt chain, replayable via `state_at(event_id)`. Cleanroom is where ARC-Core's discipline becomes runtime enforcement. |
+| **[arc-cognition-core](https://github.com/GareBear99/arc-cognition-core)** | Every training run, benchmark result, and promotion decision in the cognition lab becomes an ARC-Core-style event. Promotion gate v1 (the lineage that became LLMBuilder's Gate v2) uses ARC-Core's authority-gating pattern for who may promote what. |
+| **[ARC-Neuron-LLMBuilder](https://github.com/GareBear99/ARC-Neuron-LLMBuilder)** | Every Gate v2 promotion receipt is an ARC-Core-shaped event — candidate, incumbent, evidence, decision, SHA-256 identity. Conversation turns through the canonical pipeline are the same kind of event-with-receipt that ARC-Core pioneered. |
+| **[arc-language-module](https://github.com/GareBear99/arc-language-module)** | Language absorption, self-fill, arbitration, and release snapshots all use ARC-Core's provenance-and-approval flow: proposed term → evidence (source, trust rank) → receipt → approved canon. Contradiction handling mirrors ARC-Core's dual-record discipline. |
+| **[omnibinary-runtime](https://github.com/GareBear99/omnibinary-runtime)** | Binary intake / classification / execution-fabric events flow into the OBIN ledger using ARC-Core's receipt-first doctrine. Every binary operation produces a receipt *before* producing a result, mirroring ARC-Core's event-sourcing stance. |
+| **[Arc-RAR](https://github.com/GareBear99/Arc-RAR)** | Archive bundles and restorable extracts are event-producing. Extraction leaves an ARC-Core-style receipt; bundle manifests carry SHA-256 identity that ARC-Core's receipt chain can verify against. |
 
-The current repository (ARC-Core) contains a functional prototype with the following major areas:
+All seven repos share one author and one funding target: [github.com/sponsors/GareBear99](https://github.com/sponsors/GareBear99).
 
-### API and application surface
-- FastAPI service entrypoint
-- CORS-controlled demo mode
-- mounted HTML UI
-- health and manifest endpoints
-- auth bootstrap, login, and session resolution
+Full per-repo integration contracts: [**ECOSYSTEM.md**](./ECOSYSTEM.md).
 
-### Event and graph pipeline
-- event ingest and listing
-- entity resolution and normalization
-- entity details with related events and notes
-- graph snapshots
-- timeline views
-- risk-score prioritization
+---
 
-### Analyst workflow
-- watchlists
-- cases
-- case-event attachment
-- proposals
-- approval flow
-- notebook / notes
+## What ARC-Core is
 
-### Evidence and trust
-- audit log
-- tamper-evident receipt chain
-- receipt verification endpoint
-- signed receipt support
-- evidence export bundle
+ARC-Core is a structured intelligence-console foundation built around:
 
-### Connector and ingest extensions
-- filesystem JSONL connector sources
-- connector polling and run history
-- demo feed bootstrap
+- **Canonical events** — every meaningful state change is a typed event with a SHA-256 identity
+- **Replayable state transitions** — derive state by replaying events; never mutate in place
+- **Entity and graph tracking** — resolved identities, relationships, temporal evolution
+- **Proposal workflows** — nothing takes effect without proposal → evidence → authority → receipt
+- **Case management** — analyst investigations bind events, entities, notes, and proposals
+- **Tamper-evident receipts** — signed, hash-chained, verifiable audit trail
+- **Authority-gated actions** — role-based dependency injection at every sensitive endpoint
+- **Geospatial overlays** — structures, sensors, geofences, blueprints, calibration, tracks, incidents
+- **Evidence export** — portable, replayable evidence packs for investigations or audits
 
-### Geospatial / spatial intelligence surface
-- structures and sensors
-- geofences
-- blueprint overlays
-- calibration profiles
-- track estimation
-- track import
-- latest tracks
-- heatmap generation
-- incident creation and listing
-- evidence pack export
+**Not** a chat wrapper. **Not** a freeform agent shell. **Not** a pile of loose scripts. ARC-Core is the kernel that every operator surface, visualization layer, autonomous runtime, archive system, and cognition interface in the ARC ecosystem is meant to sit on top of.
 
-### UI pages included
-- dashboard
-- signals
-- graph
-- timeline
-- cases
-- geo
+---
 
-## Read-first audit summary
+## 📊 At a glance
 
-This package was read and inventoried before documentation changes.
+<table>
+<tr>
+<td width="50%">
 
-### Code-surface counts
-- **39 Python files** in the reconstructed working package
-- **161 functions**
-- **18 classes**
-- **13 passing tests** after reconstruction of the split bundle
+### 🟢 Technical surface
 
-### Important repo reality
-The root zip includes both:
-- a lightweight visible top-level scaffold, and
-- a **split-bundle package** that contains the full working ARC console implementation.
+- **FastAPI** backend with HTML dashboard
+- **SQLite** persistence with audit log
+- **78 Python files**
+- **13 passing tests**
+- **Auth + session** flows
+- **6 UI pages**: dashboard, signals, graph, timeline, cases, geo
+- **Geospatial**: blueprints, geofences, tracks, heatmaps, incidents, evidence export
 
-The complete working repo is reconstructed by combining the split bundle parts inside `ARC-Core_GitHub_split_bundle/`.
+</td>
+<td width="50%">
 
-That is why this README now documents the **actual full code surface**, not just the minimal root scaffold.
+### ⚡ Doctrine
 
-## Repository structure
+- **Event-sourced** kernel
+- **Replayable** state
+- **Authority-gated** execution
+- **Proposal / evidence / receipt** flow
+- **Risk scoring** with explainable inputs
+- **Evidence-pack export** (portable)
+- **Signed receipt** verification
+- **SHA-256 chain** audit trail
 
-```text
-ARC-Core-main/
-├── README.md
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── CODE_SURFACE_AUDIT.md
-│   ├── REPO_SETUP_CHECKLIST.md
-│   ├── SEO_PROMOTION.md
-│   └── STACK.md
-├── ARC_Console/
-│   ├── arc/
-│   │   ├── api/
-│   │   ├── core/
-│   │   ├── geo/
-│   │   ├── services/
-│   │   └── ui/
-│   ├── data/
-│   ├── tests/
-│   ├── run_arc.py
-│   └── requirements.txt
-├── .github/
-│   ├── ISSUE_TEMPLATE/
-│   ├── pull_request_template.md
-│   └── workflows/ci.yml
-└── ARC-Core_GitHub_split_bundle/
-    └── split upload parts for GitHub-safe assembly
-```
+</td>
+</tr>
+</table>
 
-## How to run
+---
+
+## 🚀 Quick start
 
 ### Local setup
 
 ```bash
-cd ARC_Console
+git clone https://github.com/GareBear99/ARC-Core.git
+cd ARC-Core/ARC_Console
+
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+
 python run_arc.py
 ```
 
 Then open:
-- `http://127.0.0.1:8000/`
-- `http://127.0.0.1:8000/ui/dashboard.html`
+
+- `http://127.0.0.1:8000/` — API root + manifest
+- `http://127.0.0.1:8000/ui/dashboard.html` — operator console
 
 ### Test suite
 
 ```bash
 cd ARC_Console
-pytest -q
+pytest -q              # 13 tests pass
 ```
 
-## What makes ARC-Core different
+### Demo data
 
-Most “AI agent” repos start with a model and improvise the rest.
+```bash
+cd ARC_Console
+python seed_demo.py    # seeds the SQLite with sample events, entities, cases
+```
 
-ARC-Core starts with:
-- state
-- schema
-- auditability
-- replay
-- receipts
-- bounded execution
-- approval lanes
-- evidence
+---
 
-That makes it useful for:
-- signal intelligence consoles
-- deterministic agent infrastructure
-- operator dashboards
-- case and proposal systems
-- geospatial incident tracking
-- structured memory backbones
-- future synthetic cognition runtimes
+## 🏗️ Feature surface (full inventory)
 
-## Recommended GitHub description
+### API + application layer
+- FastAPI service entrypoint (`run_arc.py`)
+- CORS-controlled demo mode
+- Mounted HTML UI (`arc/ui/`)
+- Health and manifest endpoints
+- Auth bootstrap, login, session resolution
 
-**Deterministic event, graph, proposal, case, receipt, and geospatial intelligence kernel for the wider ARC / Synth / Lucifer ecosystem.**
+### Event + graph pipeline
+- Event ingest and listing
+- Entity resolution and normalization
+- Entity details with related events and notes
+- Graph snapshots
+- Timeline views
+- Risk-score prioritization (confidence × severity × log-capped event count × edge count, with watchlist boost)
 
-## Recommended GitHub topics
+### Analyst workflow
+- Watchlists
+- Cases
+- Case-event attachment
+- Proposals
+- Approval flow
+- Notebook / notes
 
-`agi, arc, signal-intelligence, cognitive-architecture, deterministic-systems, fastapi, event-sourcing, graph, geospatial, case-management, receipts, system-of-record`
+### Evidence + trust
+- Audit log
+- Tamper-evident receipt chain
+- Receipt verification endpoint
+- Signed receipt support
+- Evidence export bundle (portable, replayable)
 
-## Roadmap direction
+### Connector + ingest
+- Filesystem JSONL connector sources
+- Connector polling and run history
+- Demo feed bootstrap
 
-Near-term next steps:
-1. unify the split-bundle packaging into a cleaner default checkout experience
-2. add explicit event schema docs and end-to-end examples
-3. expose richer operator workflows around proposals and evidence review
-4. add stronger visuals/screenshots/gifs for public discoverability
-5. extend connectors beyond filesystem JSONL
-6. deepen branch simulation and rollback semantics
-7. connect ARC-Core more directly to ARC-Turbo-OS and Synth runtime surfaces
+### Geospatial / spatial intelligence
+- Structures and sensors
+- Geofences
+- Blueprint overlays
+- Calibration profiles
+- Track estimation
+- Track import
+- Latest tracks
+- Heatmap generation
+- Incident creation and listing
+- Evidence pack export
 
-## Documentation map
+### UI pages
+- 📊 Dashboard
+- 📡 Signals
+- 🕸️ Graph
+- 📅 Timeline
+- 📁 Cases
+- 🗺️ Geo
 
-- [Architecture overview](docs/ARCHITECTURE.md)
-- [Full ecosystem stack](docs/STACK.md)
-- [Code-surface audit](docs/CODE_SURFACE_AUDIT.md)
-- [SEO and promotion guide](docs/SEO_PROMOTION.md)
-- [Repo setup checklist](docs/REPO_SETUP_CHECKLIST.md)
+---
 
-## License
+## 📂 Repository structure
 
-MIT
+```text
+ARC-Core/
+├── README.md              # this file
+├── ECOSYSTEM.md           # per-repo integration contracts
+├── LICENSE                # MIT
+├── Makefile               # shortcuts
+├── .github/               # FUNDING, issue templates, PR template, dependabot, labels
+├── docs/
+│   ├── ARCHITECTURE.md    # system design
+│   ├── CODE_SURFACE_AUDIT.md
+│   ├── REPO_SETUP_CHECKLIST.md
+│   ├── SEO_PROMOTION.md
+│   └── STACK.md           # full ecosystem stack
+├── ARC_Console/
+│   ├── arc/
+│   │   ├── api/           # FastAPI routers, deps, main
+│   │   ├── core/          # auth, config, db, risk, schemas, simulator, util
+│   │   ├── geo/            # estimator, geometry
+│   │   ├── services/       # audit, authn, bootstrap, cases, connectors,
+│   │   │                   # geospatial, graph, ingest, notebook, proposals,
+│   │   │                   # resolver, watchlists
+│   │   └── ui/             # HTML dashboard, signals, graph, timeline, cases, geo
+│   ├── data/
+│   │   └── (seed + runtime SQLite)
+│   ├── tests/              # 13 pytest tests
+│   ├── run_arc.py          # primary entrypoint
+│   ├── seed_demo.py        # demo-data seeder
+│   └── requirements.txt
+├── AUDIT_REPORT_v{2..6}.md # historical audit reports
+├── NEXT_STEPS_v7_OPERATOR_GRADE.md
+└── ARC-Core_GitHub_split_bundle/
+    └── split-upload parts for GitHub-safe assembly
+```
+
+---
+
+## ⚖️ What makes ARC-Core different
+
+Most "AI agent" repos start with a model and improvise the rest. **ARC-Core starts with state, schema, auditability, replay, receipts, bounded execution, approval lanes, and evidence.** That makes it useful for:
+
+- Signal intelligence consoles
+- Deterministic agent infrastructure
+- Operator dashboards
+- Case and proposal systems
+- Geospatial incident tracking
+- Structured memory backbones
+- Future synthetic cognition runtimes
+- Authority layer for any system that needs "did X actually happen, signed by whom, verifiable by hash"
+
+---
+
+## 🗺️ Roadmap
+
+| Milestone | Status | Target |
+|---|---|---|
+| Baseline FastAPI console + SQLite + receipts | ✅ Shipped | v1.x current |
+| Unified split-bundle into clean default checkout | 🚧 Active | v2.0 |
+| Event schema docs + end-to-end examples | 🚧 Active | v2.0 |
+| Richer operator workflows (proposals, evidence review) | 🔮 Planned | v2.1 |
+| Screenshots / GIFs / public-facing visuals | 🔮 Planned | v2.1 |
+| Connectors beyond filesystem JSONL | 🔮 Planned | v2.2 |
+| Deeper branch simulation + rollback semantics | 🔮 Planned | v2.3 |
+| ARC-Core ↔ Cleanroom Runtime direct integration | 🎯 Future | v3.0 |
+| ARC-Core ↔ LLMBuilder co-signed promotion receipts | 🎯 Future | v3.0 |
+
+Full cross-repo integration milestones: [LLMBuilder ROADMAP.md](https://github.com/GareBear99/ARC-Neuron-LLMBuilder/blob/main/ROADMAP.md) v1.3.0 "Multi-Repo Integration".
+
+---
+
+## 📚 Documentation
+
+- [ECOSYSTEM.md](./ECOSYSTEM.md) — per-repo integration contracts
+- [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) — system design
+- [docs/STACK.md](./docs/STACK.md) — full ecosystem stack
+- [docs/CODE_SURFACE_AUDIT.md](./docs/CODE_SURFACE_AUDIT.md) — code inventory
+- [docs/REPO_SETUP_CHECKLIST.md](./docs/REPO_SETUP_CHECKLIST.md) — setup checklist
+- [docs/SEO_PROMOTION.md](./docs/SEO_PROMOTION.md) — discovery guide
+- [CONTRIBUTING.md](./CONTRIBUTING.md) — how to contribute
+- [SECURITY.md](./SECURITY.md) — security policy
+- [SUPPORT.md](./SUPPORT.md) — where to ask for help
+- Historical audit reports: `AUDIT_REPORT_v{2..6}.md`, `NEXT_STEPS_v7_OPERATOR_GRADE.md`
+
+---
+
+## 👥 Community
+
+- 💬 [GitHub Discussions](https://github.com/GareBear99/ARC-Core/discussions) — questions and ideas
+- 🐛 [Issues](https://github.com/GareBear99/ARC-Core/issues) — bug reports and feature requests
+- 🔒 [Security advisories](https://github.com/GareBear99/ARC-Core/security/advisories/new) — private disclosure
+- 💖 [Sponsor](https://github.com/sponsors/GareBear99) — support ARC-Core and the six sibling repos
+
+---
+
+## 📜 License
+
+MIT — see [LICENSE](./LICENSE).
+
+---
+
+## 🎯 One-line verdict
+
+**ARC-Core is the authority — the system that every other ARC repo signs its decisions against.**

@@ -1,0 +1,45 @@
+name: ✨ Feature request
+description: Propose a new capability, event type, receipt field, or ecosystem integration.
+title: "[feature] <concise summary>"
+labels: ["enhancement", "triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed capability
+      description: Include proposed API shape, event type name, or new service.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Target layer
+      options:
+        - new event type
+        - receipt format extension
+        - authority / role addition
+        - new service
+        - API endpoint
+        - UI page
+        - geospatial capability
+        - connector
+        - evidence export
+        - cross-repo integration (sibling consumer)
+    validations:
+      required: true
+
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Boundary preservation
+      description: "Does this preserve ARC-Core's role as authority-and-receipts only, or does it cross into a sibling's role (Cleanroom execution / Cognition Core model-doctrine / etc)? See ECOSYSTEM.md."
+    validations:
+      required: true

@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+*.tar.gz
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.*.example
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+*.lcov
+
+# macOS
+.DS_Store
+__MACOSX/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Runtime data — SQLite and logs regenerate
+ARC_Console/data/*.sqlite
+ARC_Console/data/*.sqlite-journal
+ARC_Console/data/*.db
+ARC_Console/data/*.log
+!ARC_Console/data/.gitkeep
+
+# Keys / secrets
+*.key
+*.pem
+*.p12
+*.pfx

@@ -1,0 +1,66 @@
+# Canonical label set for ARC-Core.
+
+- name: bug
+  color: d73a4a
+  description: Something is broken.
+
+- name: enhancement
+  color: a2eeef
+  description: New feature or capability.
+
+- name: documentation
+  color: 0075ca
+  description: README, ECOSYSTEM, docs/.
+
+- name: triage
+  color: ededed
+  description: Needs initial review.
+
+- name: area/api
+  color: 1d76db
+  description: FastAPI endpoints and deps.
+
+- name: area/core
+  color: b60205
+  description: auth, db, risk, schemas, simulator.
+
+- name: area/services
+  color: 5319e7
+  description: Services layer (cases, graph, ingest, proposals, ...).
+
+- name: area/geo
+  color: 006b75
+  description: Geospatial / spatial intelligence.
+
+- name: area/ui
+  color: fbca04
+  description: Dashboard / signals / graph / timeline / cases / geo pages.
+
+- name: area/receipts
+  color: b60205
+  description: Audit log, receipt chain, evidence export.
+
+- name: area/ecosystem
+  color: e99695
+  description: Cross-repo integration with Cleanroom / Cognition / LLMBuilder / Language / OmniBinary / Arc-RAR.
+
+- name: authority
+  color: 7057ff
+  description: Touches ARC-Core's authority / receipt contract.
+
+- name: dependencies
+  color: 0366d6
+  description: Dependency update PRs from Dependabot.
+
+- name: good first issue
+  color: 7057ff
+- name: help wanted
+  color: 008672
+- name: in progress
+  color: fbca04
+- name: blocked
+  color: d93f0b
+- name: wontfix
+  color: ffffff
+- name: duplicate
+  color: cfd3d7

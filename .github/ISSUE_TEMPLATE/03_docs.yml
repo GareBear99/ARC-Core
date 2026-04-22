@@ -1,0 +1,24 @@
+name: 📚 Documentation issue
+description: A doc is wrong, missing, or confusing.
+title: "[docs] <concise summary>"
+labels: ["documentation", "triage"]
+body:
+  - type: input
+    id: doc
+    attributes:
+      label: Affected document
+      placeholder: "README.md | ECOSYSTEM.md | docs/ARCHITECTURE.md | docs/STACK.md | CONTRIBUTING.md"
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: What is wrong or missing
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested
+    attributes:
+      label: Suggested wording (optional)

@@ -1,0 +1,78 @@
+name: 🐛 Bug report
+description: Something is broken in the ARC console, event pipeline, receipt chain, or geospatial layer.
+title: "[bug] <concise summary>"
+labels: ["bug", "triage"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Commit or tag
+      placeholder: "main / <sha>"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Affected layer
+      options:
+        - api / FastAPI
+        - core (auth, db, risk, schemas, simulator, util)
+        - services (audit, authn, cases, connectors, geospatial, graph, ingest, notebook, proposals, resolver, watchlists)
+        - geo (estimator, geometry)
+        - ui (dashboard, signals, graph, timeline, cases, geo)
+        - receipts / audit log
+        - tests
+        - docs
+        - ecosystem integration (Cleanroom / Cognition Core / LLMBuilder / Language Module / OmniBinary / Arc-RAR)
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      render: bash
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior (errors, logs, receipt traces)
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.12.5"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS / platform
+      placeholder: "macOS 14 / Ubuntu 22.04 / Windows 11"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Verification
+      options:
+        - label: I have run `pytest -q` in `ARC_Console/` and included the result.
+          required: true
+        - label: I have searched existing issues and discussions.
+          required: true
