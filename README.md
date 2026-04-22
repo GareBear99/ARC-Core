@@ -132,7 +132,7 @@ ARC-Core is the **only** row in the category that is simultaneously:
 
 | | External verify in 1 call | Measured & published | $0 / 1M events | Setup <2s | MIT full source | Multi-domain proven |
 |---|---|---|---|---|---|---|
-| **ARC-Core** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (13 consumer repos across 4 categories) |
+| **ARC-Core** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (15 consumer repos across 5 categories) |
 | Palantir Gotham | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 | Anduril Lattice | ❌ | ❌ | ❌ | ❌ | ❌ | Defense-scoped |
 | AWS QLDB | ✅ | ✅ | ❌ | managed | ❌ | DB-scoped |
@@ -206,7 +206,7 @@ Universal-host adaptation guide (how any application rides on ARC-Core on constr
 
 ### Consumer applications — organized by category
 
-ARC-Core's discipline is used as the authority / receipt backbone for **13 consumer repositories across four distinct categories**. Each repo carries its own **🔐 Built on ARC-Core** section with a per-project pattern-mapping table.
+ARC-Core's discipline is used as the authority / receipt backbone for **15 consumer repositories across five distinct categories**. Each repo carries its own **🔐 Built on ARC-Core** section with a per-project pattern-mapping table.
 
 | Category | Repo count | What ARC-Core gives them |
 |---|---:|---|
@@ -214,6 +214,7 @@ ARC-Core's discipline is used as the authority / receipt backbone for **13 consu
 | 🎵 [Commercial product backends](#-commercial-product-backends) | 1 hub + 14 plugins | Entitlement receipts · seat audit · billing event log · authority-gated activation |
 | 🏠 [Domain operations platforms](#-domain-operations-platforms) | 2 | Real-world ops: lead scoring, pipeline kanban, licensed-area routing, safety incidents, evidence export |
 | 📈 [Trading & execution fleet](#-trading--execution-fleet) | 6 | Market tick = event · order = proposal · fill = receipt · risk limit = authority · backtest = deterministic replay |
+| 💸 [Liquidity & monetization infrastructure](#-liquidity--monetization-infrastructure) | 2 | Traffic hub events · attribution param preservation · ad-placement receipts · revenue-share proposals · SENTINEL authority gate · SCAR continuity chain |
 
 #### 🎮 Games & simulators
 
@@ -250,7 +251,18 @@ Every fleet repo ships a live GitHub Pages docs site (served from `main` / `/doc
 | **DecaGrid** — capital-ladder grid docs pack | [source](https://github.com/GareBear99/DecaGrid) | [garebear99.github.io/DecaGrid](https://garebear99.github.io/DecaGrid/) | Static HTML / PDF | DecaScore tier = authority stratum · ladder rung = sizing authority · runbook clause = authority contract · records page = receipt-chain spec |
 | **EdgeStack_Currency** — event-sourced multi-currency execution spec | [source](https://github.com/GareBear99/EdgeStack_Currency) | [garebear99.github.io/EdgeStack_Currency](https://garebear99.github.io/EdgeStack_Currency/) | Plain-prose spec | Immutable event ledger = ARC-Core event log · `FILL_PARTIAL` / `FX_CONVERSION` / `FEE` = receipts · `RECONCILIATION_CORRECTION` = authority-gated dual-record event |
 
-ARC-Core is the authority backbone for **all 13 repos above**. Every player action, seed event, grid mutation, celestial fact, plugin activation, billing transaction, real-estate lead, robotics actuator command, market tick, order fill, and reconciliation correction is an ARC-Core-shaped event with a receipt. Full per-repo integration contracts in [**ECOSYSTEM.md**](./ECOSYSTEM.md).
+#### 💸 Liquidity & monetization infrastructure
+
+Two repos form the **backend / application stack for the VALLIS ecosystem's ad-monetization and liquidity-pool surface**. `VALLIS_Liquidity` is the traffic hub + router; `ADMENSION` is the ad-placement, revenue-sharing, liquidity-pool, and smart-contract application it hosts. Both emit the same `hub_hit` / `hub_redirect` / `ad_placement` / `contribution` / `payout` event shapes that ARC-Core is designed to ingest.
+
+| Application | Source | Docs site | What it uses ARC-Core for |
+|---|---|---|---|
+| **VALLIS_Liquidity** — traffic hub + router for the VALLIS ecosystem | [source](https://github.com/GareBear99/VALLIS_Liquidity) | (static `index.html`) | `hub_hit` = event · `hub_redirect` = receipt · UTM / referrer / `adm` / seed param capture = event provenance · routing decision (`to=vallis`, `auto=1`) = proposal with evidence · attribution preservation across redirect = ARC-Core entity-identity pattern |
+| **ADMENSION** — ad monetization + liquidity pools + smart contracts | [source](https://github.com/GareBear99/ADMENSION) · [live](https://garebear99.github.io/ADMENSION/) | [garebear99.github.io/ADMENSION](https://garebear99.github.io/ADMENSION/) | 154 ad placements = event catalog · revenue-share contribution = proposal → evidence → receipt · **SENTINEL** safety = authority gating · **SCAR** continuity = receipt chain · 5 liquidity pools + Anunnaki Vault = authority-gated state · EVE AI chatbot interactions = event log · smart-contract calls = on-chain proof of receipted events |
+
+**How they fit together**: VALLIS_Liquidity handles all inbound traffic and attribution (which is event-rich by nature), routes to ADMENSION (or into the wider VALLIS surface), and emits every hop as an ARC-Core-shaped event. ADMENSION then produces the revenue-share, placement-fill, and pool-rebalance events that make up its actual business logic. ARC-Core is the event-and-receipt spine that lets the VALLIS ecosystem hold itself to its own receipts.
+
+ARC-Core is the authority backbone for **all 15 repos above**. Every player action, seed event, grid mutation, celestial fact, plugin activation, billing transaction, real-estate lead, robotics actuator command, market tick, order fill, reconciliation correction, traffic-hub hop, and ad-placement contribution is an ARC-Core-shaped event with a receipt. Full per-repo integration contracts in [**ECOSYSTEM.md**](./ECOSYSTEM.md).
 
 ---
 

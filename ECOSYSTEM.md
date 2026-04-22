@@ -151,6 +151,8 @@ Each of the five consumer repos below now carries its own **🔐 Built on ARC-Co
 | 📈 One-Shot-Multi-Shot (binary options) | [One-Shot-Multi-Shot](https://github.com/GareBear99/One-Shot-Multi-Shot) |
 | 📈 DecaGrid (capital-ladder grid docs) | [DecaGrid](https://github.com/GareBear99/DecaGrid) |
 | 📈 EdgeStack_Currency (execution spec) | [EdgeStack_Currency](https://github.com/GareBear99/EdgeStack_Currency) |
+| 💸 VALLIS Liquidity (traffic hub + router) | [VALLIS_Liquidity](https://github.com/GareBear99/VALLIS_Liquidity) |
+| 💸 ADMENSION (ad monetization + liquidity pools) | [ADMENSION](https://github.com/GareBear99/ADMENSION) |
 
 ---
 
@@ -293,6 +295,36 @@ Every fleet repo also publishes a live GitHub Pages docs site (served from `main
 - **ARC-Core owns**: the event shape, the authority-gating primitive, the receipt chain, deterministic replay, the reconciliation contract.
 - **Each bot owns**: its venue adapter, its signal logic, its risk math, its UI. When wired to ARC-Core, decisions become receipts and the spine becomes the auditable journal.
 - **DecaGrid** owns the *policy* (how the ladder ought to escalate), [BrokeBot / Charm / Harvest / One-Shot-Multi-Shot] own the *actuator* (what orders to send), and **EdgeStack_Currency** owns the *ledger shape* (how state must move between accounts / venues / currencies). ARC-Core owns the *truth of what happened*.
+
+---
+
+### 💸 Liquidity & monetization infrastructure — VALLIS ecosystem backend
+
+**VALLIS_Liquidity is the traffic hub + router that fronts the VALLIS ecosystem. ADMENSION is the ad-monetization + liquidity-pool application it hosts. Together they form a two-layer stack: VALLIS_Liquidity owns attribution + routing, ADMENSION owns monetization + pools. ARC-Core owns the event truth underneath both.**
+
+#### What VALLIS_Liquidity uses ARC-Core for
+
+- **Hub event log** — every `hub_hit` at the root domain and every `hub_redirect` to a subsystem (`/ADMENSION/`, `/VALLIS/`) is an ARC-Core event with SHA-256 identity.
+- **Attribution discipline** — `utm_*`, `referrer`, `adm`, `s`, `seed` params are captured into event provenance (ARC-Core's entity-identity + evidence pattern) and preserved across redirects so downstream systems can attribute revenue share correctly.
+- **Routing as proposal + evidence** — the router's decision between ADMENSION vs VALLIS, `auto=1` vs hub UI, is a proposal whose evidence is the captured params and whose receipt is the final redirect.
+- **Collector federation** — the optional `ADMENSION_COLLECTOR_URL` shape lets both the hub and ADMENSION emit into the same event collector. ARC-Core normalizes that into a single receipt chain.
+
+#### What ADMENSION uses ARC-Core for
+
+- **Ad-placement event catalog** — 154 placements become a typed event catalog; every impression, click, and contribution is an ARC-Core event.
+- **Revenue-share as proposal → evidence → receipt** — contribution calculations, pool deposits, and payouts flow through ARC-Core's canonical proposal/authority/receipt discipline instead of being implicit ledger updates.
+- **SENTINEL safety = authority gating** — SENTINEL's policy checks map onto ARC-Core's authority primitive: refuse-then-log instead of log-then-maybe-refuse.
+- **SCAR continuity = receipt chain** — SCAR's continuity semantics are ARC-Core's tamper-evident receipt chain by another name.
+- **5 liquidity pools + Anunnaki Vault** — pool state is an authority-gated entity in ARC-Core terms; every rebalance is a receipted event.
+- **EVE AI chatbot** — each user-visible interaction is an event with provenance, so support and dispute replay is possible.
+- **Smart-contract calls** — on-chain transactions become ARC-Core receipts with a second, on-chain proof; the two chains co-sign the same history.
+
+#### Where the boundary sits
+
+- **ARC-Core owns**: event identity, authority primitive, receipt chain, attribution provenance, deterministic replay.
+- **VALLIS_Liquidity owns**: the traffic-hub UX, the redirect logic, the param-capture behavior, the `ads.txt` surface.
+- **ADMENSION owns**: the ad-placement taxonomy, the revenue-share math, the pool curves, the smart-contract surface, the EVE chatbot, the SENTINEL / SCAR implementations.
+- **Relationship**: VALLIS_Liquidity is the backend-of-the-backend (traffic → attribution → route); ADMENSION is the application it hosts; ARC-Core is the receipt-chain both emit into. Neither VALLIS_Liquidity nor ADMENSION owns "the truth" — they own their domain; ARC-Core owns the record.
 
 ---
 
