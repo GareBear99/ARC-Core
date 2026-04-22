@@ -54,12 +54,19 @@ Why this matters:
 | **ARC-Core** *(this repo)* | The spine. Every operator run is an event; every verdict is a receipt; the receipt chain is what makes the deployment auditable and replayable. |
 | **[ARC-Neuron-LLMBuilder](https://github.com/GareBear99/ARC-Neuron-LLMBuilder)** | The learner. Nightly cron ingests the operator's `llmbuilder-training-export` artifacts into `data/critique/operator_reviews.jsonl` for the next Gate v2 training run. See [LIVE_DEPLOYMENT_LEARNING.md](https://github.com/GareBear99/ARC-Neuron-LLMBuilder/blob/main/docs/LIVE_DEPLOYMENT_LEARNING.md). |
 
+### Live endpoints (as of 2026-04-22)
+
+- **Cloudflare Worker**: <https://arc-ai-operator.admension.workers.dev> — `GET /` service card; `POST /review` fires `repository_dispatch` at gh-ai-operator.
+- **Static intake form**: <https://garebear99.github.io/Portfolio/review.html> — Pages-hosted form; CORS-allowlisted to the Worker.
+- **First Portfolio review issue**: <https://github.com/GareBear99/Portfolio/issues/1> (target: FreeEQ8).
+- **Dispatch hop proven live**: Worker returns HTTP 202; GitHub accepts `repository_dispatch`; operator `ai-review-dispatch.yml` run triggers within seconds. The remaining blocker is a GitHub Actions billing hold on `GareBear99` — queued runs start immediately when that clears.
+
 Activation secrets (each hop degrades gracefully if its secret is missing):
 
-- `gh-ai-operator → CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN` — Workers AI as LLM backend.
-- `gh-ai-operator → PORTFOLIO_WRITE_TOKEN` — PAT with `issues: write` on Portfolio.
-- `Portfolio → AI_OPERATOR_DISPATCH_TOKEN` — PAT with `Actions: write` on gh-ai-operator.
-- `ARC-Neuron-LLMBuilder → OPERATOR_READ_TOKEN` — PAT with `Actions: read` on gh-ai-operator.
+- `gh-ai-operator → CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN` — Workers AI as LLM backend. ACCOUNT_ID set; API_TOKEN still pending (create at <https://dash.cloudflare.com/profile/api-tokens>).
+- `gh-ai-operator → PORTFOLIO_WRITE_TOKEN` — set (bootstrap).
+- `Portfolio → AI_OPERATOR_DISPATCH_TOKEN` — set (bootstrap).
+- `ARC-Neuron-LLMBuilder → OPERATOR_READ_TOKEN` — set (bootstrap).
 
 ---
 
