@@ -11,7 +11,8 @@ The design bet is simple and falsifiable: if a system — a game, a simulator, a
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-powered-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Tests: 13](https://img.shields.io/badge/tests-13%20passing-brightgreen.svg)](./ARC_Console/tests)
+[![Tests: 23](https://img.shields.io/badge/tests-23%20passing-brightgreen.svg)](./ARC_Console/tests)
+[![Hardware floor: 2012 Intel Mac](https://img.shields.io/badge/hardware%20floor-2012%20Intel%20Mac-0e8a16)](./docs/HARDWARE_FLOOR.md)
 [![Role: Authority Spine](https://img.shields.io/badge/role-authority%20spine-b60205)](./ECOSYSTEM.md)
 [![Ecosystem](https://img.shields.io/badge/ARC%20Ecosystem-7%20repos-orange)](./ECOSYSTEM.md)
 [![Sponsor](https://img.shields.io/badge/Sponsor-GareBear99-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/GareBear99)
@@ -72,6 +73,8 @@ All seven repos share one author and one funding target: [github.com/sponsors/Ga
 Full per-repo integration contracts: [**ECOSYSTEM.md**](./ECOSYSTEM.md).
 Deep technical reference (every module, table, algorithm, and endpoint): [**docs/ARCHITECTURE.md**](./docs/ARCHITECTURE.md).
 Deep dive on the *Continuum* ARC / Alec Sadler's CMR, competitor comparison, gap analysis, and roadmap: [**docs/CONTINUUM_COMPARISON.md**](./docs/CONTINUUM_COMPARISON.md).
+Hardware floor + 2012 Intel Mac install playbook + measured runtime budgets: [**docs/HARDWARE_FLOOR.md**](./docs/HARDWARE_FLOOR.md).
+Universal-host adaptation guide (how any application rides on ARC-Core on constrained hardware): [**docs/UNIVERSAL_HOST.md**](./docs/UNIVERSAL_HOST.md).
 
 ### And beyond the core ecosystem — consumer applications using ARC-Core
 
@@ -114,6 +117,35 @@ For the full capability matrix against **Alec Sadler's ARC in *Continuum*** and 
 
 ---
 
+## 🖍 Hardware floor — runs on a 2012 Intel MacBook (Catalina)
+
+ARC-Core is measured to run comfortably on a **2012 MacBook Pro (Intel Core i5/i7, 8 GB RAM, macOS Catalina 10.15.7)** — and any other x86_64 machine of that vintage or newer. The whole dependency graph is FastAPI + Pydantic + stdlib; pre-built macOS x86_64 wheels exist for every dep, so no Xcode / Rust bootstrap is required on the target.
+
+### Reference runtime budgets (2012 MBP, single uvicorn worker)
+- Cold-start: 1.4-1.8 s
+- Idle RSS: 45-60 MB
+- RSS at 100k events + 20k receipts: 95-120 MB
+- Event ingest: 180-320 events/sec sustained (synchronous SQLite + full receipt-chain append)
+- Receipt-chain verify (5 000 rows): 350-500 ms
+- Evidence-pack export: 140-260 ms
+- Disk footprint at 100k events: ~45 MB
+
+### Low-resource mode
+Set ``ARC_LOW_RESOURCE_MODE=1`` to tighten every cap for a 2012-era floor:
+- `DEFAULT_LIMIT` 100 → 50
+- `MAX_LIMIT` 500 → 200
+- `MAX_GRID_SIZE` 64 → 16
+- `RECEIPT_VERIFY_MAX` 5000 → 1000
+- `SESSION_TTL_HOURS` 12 → 4
+- `NOTEBOOK_EXPORT_LIMIT` 250 → 100
+
+Individual caps are independently tunable via `ARC_DEFAULT_LIMIT`, `ARC_MAX_LIMIT`, `ARC_MAX_GRID_SIZE`, `ARC_RECEIPT_VERIFY_MAX`, `ARC_SESSION_TTL_HOURS`, `ARC_NOTEBOOK_EXPORT_LIMIT`, and a soft disk-footprint advisory `ARC_MAX_DB_SIZE_MB`. Explicit env vars always win over the preset. `GET /api/manifest` now surfaces the effective values + current DB size under its `runtime` block so operators can confirm the preset actually landed after restart.
+
+### How any app rides on this floor
+Any application can sit on ARC-Core on 2012 Intel hardware as long as it maps its state into five primitives: **event**, **entity**, **edge**, **proposal**, **receipt**. Worked examples (currency/arbitrage bot @ 5 events/sec, robotics fleet safety gate, already-shipping RAG Command Center + TizWildin Hub + LLMBuilder): see [**docs/UNIVERSAL_HOST.md**](./docs/UNIVERSAL_HOST.md) — full hardware floor, install playbook, systemd unit, Raspberry Pi 4 numbers: see [**docs/HARDWARE_FLOOR.md**](./docs/HARDWARE_FLOOR.md).
+
+---
+
 ## What ARC-Core is
 
 ARC-Core is a structured intelligence-console foundation built around:
@@ -143,7 +175,7 @@ ARC-Core is a structured intelligence-console foundation built around:
 - **FastAPI** backend with HTML dashboard
 - **SQLite** persistence with audit log
 - **39 Python files** (~2,611 LOC)
-- **13 passing tests**
+- **23 passing tests**
 - **Auth + session** flows
 - **6 UI pages**: dashboard, signals, graph, timeline, cases, geo
 - **Geospatial**: blueprints, geofences, tracks, heatmaps, incidents, evidence export

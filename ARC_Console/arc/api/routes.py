@@ -14,7 +14,19 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from fastapi.responses import FileResponse
 from arc.core.auth import require_role
-from arc.core.config import APP_NAME, APP_VERSION, DEFAULT_LIMIT, MAX_GRID_SIZE, MAX_LIMIT, RECEIPT_VERIFY_MAX
+from arc.core.config import (
+    APP_NAME,
+    APP_VERSION,
+    DATA_DIR,
+    DEFAULT_LIMIT,
+    LOW_RESOURCE_MODE,
+    MAX_DB_SIZE_MB,
+    MAX_GRID_SIZE,
+    MAX_LIMIT,
+    NOTEBOOK_EXPORT_LIMIT,
+    RECEIPT_VERIFY_MAX,
+    SESSION_TTL_HOURS,
+)
 from arc.core.db import connect
 from arc.core.schemas import (
     EventIn, WatchlistIn, CaseIn, ProposalIn, StructureIn, GeofenceIn, TrackEstimateIn,
@@ -84,6 +96,16 @@ def health():
 
 @router.get("/api/manifest")
 def manifest():
+    """Feature manifest + effective runtime caps.
+
+    The ``runtime`` block lets operators (and monitoring scripts) see exactly
+    which limits are active given the current environment — useful for
+    verifying low-resource deployments on 2012-era Intel hardware, and for
+    confirming that per-env overrides (``ARC_DEFAULT_LIMIT`` etc.) actually
+    landed after a restart.
+    """
+    db_path = DATA_DIR / "arc_core.db"
+    db_size_mb = round(db_path.stat().st_size / (1024 * 1024), 3) if db_path.exists() else 0.0
     return {
         "name": APP_NAME,
         "version": APP_VERSION,
@@ -93,6 +115,18 @@ def manifest():
             "tamper_evident_receipts", "signed_receipts", "auth_sessions", "connector_bus", "analyst_notebook",
         ],
         "ui": ["dashboard", "signals", "graph", "timeline", "cases", "geo"],
+        "runtime": {
+            "low_resource_mode": LOW_RESOURCE_MODE,
+            "default_limit": DEFAULT_LIMIT,
+            "max_limit": MAX_LIMIT,
+            "max_grid_size": MAX_GRID_SIZE,
+            "receipt_verify_max": RECEIPT_VERIFY_MAX,
+            "session_ttl_hours": SESSION_TTL_HOURS,
+            "notebook_export_limit": NOTEBOOK_EXPORT_LIMIT,
+            "max_db_size_mb": MAX_DB_SIZE_MB,
+            "db_size_mb": db_size_mb,
+            "db_size_over_cap": bool(MAX_DB_SIZE_MB and db_size_mb > MAX_DB_SIZE_MB),
+        },
     }
 
 

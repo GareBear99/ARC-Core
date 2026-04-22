@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arc-core"
+version = "6.0.0"
+description = "Signal-intelligence event spine: events, entities, graph, cases, proposals, geospatial, tamper-evident receipts. MIT-licensed, single-author, runs on 2012-era Intel hardware."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Gary Doman", email = "oss@domain.ai" }]
+keywords = [
+    "signal-intelligence",
+    "event-sourcing",
+    "receipt-chain",
+    "tamper-evident",
+    "authority-gating",
+    "case-management",
+    "geospatial",
+    "fastapi",
+    "sqlite",
+    "arc",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: System :: Logging",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "pydantic>=2.10,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.3",
+    "httpx>=0.27",
+    "anyio>=4.4",
+]
+
+[project.urls]
+Homepage = "https://github.com/GareBear99/ARC-Core"
+Repository = "https://github.com/GareBear99/ARC-Core"
+Documentation = "https://github.com/GareBear99/ARC-Core/tree/main/docs"
+"Bug Tracker" = "https://github.com/GareBear99/ARC-Core/issues"
+Sponsor = "https://github.com/sponsors/GareBear99"
+
+[project.scripts]
+arc-core = "arc.api.main:app"
+
+[tool.setuptools.packages.find]
+where = ["ARC_Console"]
+include = ["arc*"]
+
+[tool.setuptools.package-data]
+arc = ["ui/*.html", "ui/**/*.css", "ui/**/*.js"]
+
+[tool.pytest.ini_options]
+testpaths = ["ARC_Console/tests"]
+pythonpath = ["ARC_Console"]
+
+# Hardware floor
+# --------------
+# ARC-Core targets a 2012-era Intel laptop (2-4 cores, 4-8 GB RAM, macOS
+# Catalina or Linux equivalent) as its reference low-resource deployment.
+# Dependency versions above are chosen so that wheels are available for
+# macOS x86_64 without needing Xcode / Rust / Homebrew build chains.
+# See docs/HARDWARE_FLOOR.md for the full compatibility matrix and install
+# playbook.
