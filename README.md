@@ -1,10 +1,12 @@
 # ARC-Core
 
-**The authoritative event-and-receipt engine for the ARC governed-AI ecosystem — a deterministic kernel for signal intelligence, entity resolution, graph state, case management, proposal workflows, geospatial overlays, and authority-gated execution.**
+**ARC-Core is a signal-intelligence event spine — a deterministic kernel built to host every project its author has ever developed, in tandem and smoothly, through one universal discipline: every state change is an event, every event produces a signed receipt, and every receipt is authority-gated.**
 
-> Every receipt in the ARC ecosystem derives from ARC-Core's discipline. Inspired by ARC-OS (2067) from *Continuum*, built as the system-of-record layer that every other ARC repo can sign its decisions against.
+The design bet is simple and falsifiable: if a system — a game, a simulator, a plugin backend, a governed-AI training loop, an archive manager, a language engine, a binary runtime, a cognition lab — can be modeled as *entities, events, authority, and receipts*, then ARC-Core can serve as its spine. In theory the entire author's project ecosystem (games, engines, simulators, audio plugins, governed-AI stack, archives, languages, binary runtimes) can ride on one ARC-Core authority layer without any project owning another's truth. The seven-repo governed-AI ecosystem plus the five active consumer applications (see below) are the current concrete evidence of that bet.
 
-<sub>**Topics**: signal intelligence · event sourcing · receipt chains · cognitive architecture · deterministic systems · case management · geospatial intelligence · FastAPI · SQLite · authority gating · ARC ecosystem · governed AI · operator console · Proto-AGI infrastructure</sub>
+> **Inspiration — *Continuum* (2012 Canadian sci-fi, creator Simon Barry, 4 seasons, 42 episodes).** Set in 2077, under a Corporate Congress surveillance dystopia where CPS "Protectors" like Kiera Cameron carry CMR (cellular memory recall) implants and every action is logged, reviewed, and attributable. ARC-Core takes that world's *idea* — a tamper-evident signal-intelligence spine with authority, provenance, and replay — and builds an ethical, open-source version of it: same discipline (every event has a receipt, every actor has an authority), opposite politics (author-owned, MIT-licensed, analyst-serving, not a corporate-oligarchy surveillance tool). The show is the *aesthetic and doctrinal reference*; no characters, logos, or canon code are claimed.
+
+<sub>**Topics**: signal intelligence · event sourcing · receipt chains · universal event spine · cognitive architecture · deterministic systems · case management · geospatial intelligence · FastAPI · SQLite · authority gating · ARC ecosystem · governed AI · operator console · Proto-AGI infrastructure</sub>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
