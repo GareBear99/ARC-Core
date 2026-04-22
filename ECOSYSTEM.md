@@ -277,14 +277,16 @@ Each plugin talks to the Hub over HTTPS, and every license check, update check, 
 
 **Six public trading / execution-spec repos share a single ARC-Core-compatible doctrine: every market tick is an event, every order is a proposal, every fill is a receipt, every risk limit is an authority check, every backtest is a deterministic replay of the event log.**
 
-| Repo | Role | Stack | ARC-Core mapping |
-|---|---|---|---|
-| [BrokeBot](https://github.com/GareBear99/BrokeBot) | CEX funding-rate arbitrage (small accounts, USDT-TRC20) | Python, Binance Futures | Funding tick = event · entry decision = proposal · fill = receipt · risk-limit halt = authority refusal · kill switch = manual authority override |
-| [Charm](https://github.com/GareBear99/Charm) | On-chain spot bot on Base (Uniswap v3, ≤$12 accounts) | Node.js, ethers.js | Pool sample = event · mean-reversion trigger = proposal · swap tx = receipt · dedicated-wallet private key = scoped `auth_user` · per-session cap = authority limit |
-| [Harvest](https://github.com/GareBear99/Harvest) | Multi-timeframe crypto research platform with grid-search | Python, Web3 | OHLCV ingest = events · strategy selection = proposal w/ evidence · backtest = deterministic replay · data-freshness gate = authority refusal · MetaMask session = scoped auth |
-| [One-Shot-Multi-Shot](https://github.com/GareBear99/One-Shot-Multi-Shot) | Binary-options engine with 3-hearts risk lifecycle | JS / HTML5, MetaMask | Prediction tick = event · trade gate = proposal · outcome = receipt · heart depletion = authority halt · daily cap = authority ceiling |
-| [DecaGrid](https://github.com/GareBear99/DecaGrid) | Capital-ladder grid docs pack (whitepaper, runbook, DecaScore) | Static HTML / PDF | DecaScore tier = authority stratum · ladder rung = sizing authority · runbook clause = authority contract · records page = receipt-chain spec |
-| [EdgeStack_Currency](https://github.com/GareBear99/EdgeStack_Currency) | Canonical event-sourced multi-currency execution spec | Plain-prose spec | Immutable event ledger = ARC-Core event log · `FILL_PARTIAL` / `FX_CONVERSION` / `FEE` = receipts · `RECONCILIATION_CORRECTION` = authority-gated dual-record event |
+Every fleet repo also publishes a live GitHub Pages docs site (served from `main` / `/docs`).
+
+| Repo | Role | Docs site | Stack | ARC-Core mapping |
+|---|---|---|---|---|
+| [BrokeBot](https://github.com/GareBear99/BrokeBot) | CEX funding-rate arbitrage (small accounts, USDT-TRC20) | [garebear99.github.io/BrokeBot](https://garebear99.github.io/BrokeBot/) | Python, Binance Futures | Funding tick = event · entry decision = proposal · fill = receipt · risk-limit halt = authority refusal · kill switch = manual authority override |
+| [Charm](https://github.com/GareBear99/Charm) | On-chain spot bot on Base (Uniswap v3, ≤$12 accounts) | [garebear99.github.io/Charm](https://garebear99.github.io/Charm/) | Node.js, ethers.js | Pool sample = event · mean-reversion trigger = proposal · swap tx = receipt · dedicated-wallet private key = scoped `auth_user` · per-session cap = authority limit |
+| [Harvest](https://github.com/GareBear99/Harvest) | Multi-timeframe crypto research platform with grid-search | [garebear99.github.io/Harvest](https://garebear99.github.io/Harvest/) | Python, Web3 | OHLCV ingest = events · strategy selection = proposal w/ evidence · backtest = deterministic replay · data-freshness gate = authority refusal · MetaMask session = scoped auth |
+| [One-Shot-Multi-Shot](https://github.com/GareBear99/One-Shot-Multi-Shot) | Binary-options engine with 3-hearts risk lifecycle | [garebear99.github.io/One-Shot-Multi-Shot](https://garebear99.github.io/One-Shot-Multi-Shot/) | JS / HTML5, MetaMask | Prediction tick = event · trade gate = proposal · outcome = receipt · heart depletion = authority halt · daily cap = authority ceiling |
+| [DecaGrid](https://github.com/GareBear99/DecaGrid) | Capital-ladder grid docs pack (whitepaper, runbook, DecaScore) | [garebear99.github.io/DecaGrid](https://garebear99.github.io/DecaGrid/) | Static HTML / PDF | DecaScore tier = authority stratum · ladder rung = sizing authority · runbook clause = authority contract · records page = receipt-chain spec |
+| [EdgeStack_Currency](https://github.com/GareBear99/EdgeStack_Currency) | Canonical event-sourced multi-currency execution spec | [garebear99.github.io/EdgeStack_Currency](https://garebear99.github.io/EdgeStack_Currency/) | Plain-prose spec | Immutable event ledger = ARC-Core event log · `FILL_PARTIAL` / `FX_CONVERSION` / `FEE` = receipts · `RECONCILIATION_CORRECTION` = authority-gated dual-record event |
 
 #### Where the boundary sits
 
