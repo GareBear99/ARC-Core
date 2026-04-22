@@ -6,7 +6,49 @@ The design bet is simple and falsifiable: if a system — a game, a simulator, a
 
 > **Inspiration — *Continuum* (2012 Canadian sci-fi, creator Simon Barry, 4 seasons, 42 episodes).** Set in 2077, under a Corporate Congress surveillance dystopia where CPS "Protectors" like Kiera Cameron carry CMR (cellular memory recall) implants and every action is logged, reviewed, and attributable. ARC-Core takes that world's *idea* — a tamper-evident signal-intelligence spine with authority, provenance, and replay — and builds an ethical, open-source version of it: same discipline (every event has a receipt, every actor has an authority), opposite politics (author-owned, MIT-licensed, analyst-serving, not a corporate-oligarchy surveillance tool). The show is the *aesthetic and doctrinal reference*; no characters, logos, or canon code are claimed.
 
-<sub>**Topics**: signal intelligence · event sourcing · receipt chains · universal event spine · cognitive architecture · deterministic systems · case management · geospatial intelligence · FastAPI · SQLite · authority gating · ARC ecosystem · governed AI · operator console · Proto-AGI infrastructure</sub>
+## 🤖 Live deployment — the AI operative feedback loop
+
+**A real AI operative is running on this spine right now.** The [ARC GitHub AI Operator](https://github.com/GareBear99/gh-ai-operator) answers code-review issues on the [Portfolio](https://github.com/GareBear99/Portfolio), runs clone + snapshot + heuristics + [Cloudflare Workers AI](https://github.com/GareBear99/gh-ai-operator/blob/main/cloudflare/README.md), and posts a verdict (🟢 ship · 🟡 feedback · 🔴 redesign) back on the issue. Every review is an ARC-Core-shaped event; every verdict is a receipt. Every production call also emits a supervised training example that [ARC-Neuron-LLMBuilder](https://github.com/GareBear99/ARC-Neuron-LLMBuilder) ingests nightly — so the operative is also a **continuous-learning worker** for the next Gate v2 candidate.
+
+```mermaid
+flowchart LR
+    U["User: Portfolio<br/>code-review issue"] --> O["gh-ai-operator<br/>Cloudflare Workers AI + Actions"]
+    O -- "verdict comment" --> U
+    O -- "every run = event + receipt" --> AC["🔐 ARC-Core<br/>event + receipt spine"]
+    O -- "training JSONL" --> LB["🧠 LLMBuilder<br/>critique corpus"]
+    U -. follow-up .-> COR["correction JSONL<br/>human-weighted"]
+    COR --> LB
+    LB --> NEXT["next Gate v2 candidate"]
+    style AC fill:#b60205,stroke:#fff,color:#fff
+    style LB fill:#7057ff,stroke:#fff,color:#fff
+    style O  fill:#0366d6,stroke:#fff,color:#fff
+```
+
+Why this matters:
+
+1.  **Always-on.** Open a Portfolio code-review issue and the operative responds automatically, 24/7.
+2.  **Self-generating corpus.** Every live call becomes a supervised training example; LLMBuilder's `critique` corpus grows nightly without manual curation.
+3.  **Human correction channel.** Portfolio Follow-up issues emit weighted correction records so governance trains the model to listen to its failures.
+4.  **Tamper-evident.** Every step is an ARC-Core event with a SHA-256 identity; the live deployment cannot silently rewrite its history.
+5.  **No seat fee, no credit card.** Cloudflare Workers AI (~10k neurons/day) + Cloudflare Workers (~100k req/day) + GitHub Actions (free for public) + MIT source. One author, one funding pool.
+
+**Role table**
+
+| Repo | Role in the live loop |
+|---|---|
+| **[gh-ai-operator](https://github.com/GareBear99/gh-ai-operator)** | The operative itself. Cloudflare Workers AI as the default LLM backend. Emits LLMBuilder-ready training JSONL on every review. |
+| **[Portfolio](https://github.com/GareBear99/Portfolio)** | Intake surface. `.github/workflows/ai-pre-review.yml` dispatches `code-review-request` events; Follow-up issues generate higher-weighted correction records. |
+| **ARC-Core** *(this repo)* | The spine. Every operator run is an event; every verdict is a receipt; the receipt chain is what makes the deployment auditable and replayable. |
+| **[ARC-Neuron-LLMBuilder](https://github.com/GareBear99/ARC-Neuron-LLMBuilder)** | The learner. Nightly cron ingests the operator's `llmbuilder-training-export` artifacts into `data/critique/operator_reviews.jsonl` for the next Gate v2 training run. See [LIVE_DEPLOYMENT_LEARNING.md](https://github.com/GareBear99/ARC-Neuron-LLMBuilder/blob/main/docs/LIVE_DEPLOYMENT_LEARNING.md). |
+
+Activation secrets (each hop degrades gracefully if its secret is missing):
+
+- `gh-ai-operator → CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN` — Workers AI as LLM backend.
+- `gh-ai-operator → PORTFOLIO_WRITE_TOKEN` — PAT with `issues: write` on Portfolio.
+- `Portfolio → AI_OPERATOR_DISPATCH_TOKEN` — PAT with `Actions: write` on gh-ai-operator.
+- `ARC-Neuron-LLMBuilder → OPERATOR_READ_TOKEN` — PAT with `Actions: read` on gh-ai-operator.
+
+<sub>**Topics**: signal intelligence · event sourcing · receipt chains · universal event spine · cognitive architecture · deterministic systems · case management · geospatial intelligence · FastAPI · SQLite · authority gating · ARC ecosystem · governed AI · operator console · Proto-AGI infrastructure · live AI deployment · continuous learning worker · gh-ai-operator · ARC-Neuron-LLMBuilder · Cloudflare Workers AI</sub>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -284,56 +326,6 @@ The seven governed-AI repos and 15 consumer repos above are **production-oriente
 The upgrade path is the same in every case: teach the future repo to emit events into ARC-Core's event log, pin its authority to ARC-Core's role ladder, and let the receipt chain become the external verifier for whatever the future repo is claiming (OS speedups, proto-AGI memory, photon cognition, RF provenance). The kernel does not change; the surface expands.
 
 Full per-repo integration contracts for the four future-plan repos: [**ECOSYSTEM.md § Future development plans**](./ECOSYSTEM.md#-future-development-plans--arc-core-roadmap).
-
----
-
-## 🤖 Live implementation in action — the AI operative feedback loop
-
-The ARC ecosystem now runs a **real, live AI operative in production**: the [ARC GitHub AI Operator](https://github.com/GareBear99/gh-ai-operator). It answers code-review issues on the [Portfolio](https://github.com/GareBear99/Portfolio), runs clone + snapshot + heuristics + [Cloudflare Workers AI](https://github.com/GareBear99/gh-ai-operator/blob/main/cloudflare/README.md), and posts a verdict (🟢 ship · 🟡 feedback · 🔴 redesign) straight onto the issue. Every run is an ARC-Core-shaped event; every verdict is a receipt.
-
-That operator is also wired as a **continuous-learning worker** for [ARC-Neuron-LLMBuilder](https://github.com/GareBear99/ARC-Neuron-LLMBuilder): each production review emits a supervised training example in LLMBuilder's seed-examples schema, and LLMBuilder's nightly workflow ingests those examples into its `critique` corpus.
-
-```mermaid
-flowchart LR
-    U["User: Portfolio<br/>code-review issue"] --> O["gh-ai-operator<br/>Cloudflare Workers AI + Actions"]
-    O -- "verdict comment" --> U
-    O -- "every run = ARC-Core event + receipt" --> AC["🔐 ARC-Core<br/>event + receipt spine"]
-    O -- "training JSONL" --> LB["🧠 LLMBuilder<br/>critique corpus"]
-    U -. follow-up .-> COR["correction JSONL<br/>human-weighted"]
-    COR --> LB
-    LB --> NEXT["next Gate v2 candidate"]
-    style AC fill:#b60205,stroke:#fff,color:#fff
-    style LB fill:#7057ff,stroke:#fff,color:#fff
-    style O  fill:#0366d6,stroke:#fff,color:#fff
-```
-
-### What each repo in the loop owns
-
-| Repo | Role in the live loop |
-|---|---|
-| **[gh-ai-operator](https://github.com/GareBear99/gh-ai-operator)** | The operative itself. Cloudflare Workers AI as the default LLM backend (free tier). Cloudflare Worker HTTPS proxy. GitHub Actions runner. Emits LLMBuilder-ready training JSONL on every review. |
-| **[Portfolio](https://github.com/GareBear99/Portfolio)** | Intake surface. Four issue templates (hire, code-review, follow-up, general). `.github/workflows/ai-pre-review.yml` dispatches `code-review-request` events. Follow-up issues generate higher-weighted correction records. |
-| **ARC-Core** *(this repo)* | The spine underneath everything. Every operator run is an event; every verdict is a receipt; the receipt chain is what makes the live-deployment's history auditable and replayable. |
-| **[ARC-Neuron-LLMBuilder](https://github.com/GareBear99/ARC-Neuron-LLMBuilder)** | The learner. Nightly cron pulls the operator's `llmbuilder-training-export` artifacts, dedupes by id, bumps correction-tagged records by +0.05 confidence, commits the merged shard to `data/critique/operator_reviews.jsonl`. See [docs/LIVE_DEPLOYMENT_LEARNING.md](https://github.com/GareBear99/ARC-Neuron-LLMBuilder/blob/main/docs/LIVE_DEPLOYMENT_LEARNING.md). |
-
-### Why this is a real deployment, not a demo
-
-1.  **Always-on.** Anyone can open a Portfolio code-review issue and the operator responds automatically, 24/7, on Cloudflare's + GitHub's free tiers.
-2.  **Self-generating corpus.** Every live call becomes a supervised training example. LLMBuilder's critique corpus grows automatically; the next Gate v2 candidate inherits that growth.
-3.  **Human correction channel.** When the operator's verdict is wrong, a Portfolio Follow-up issue emits a weighted correction record, so governance can train the model to listen to its failures.
-4.  **Tamper-evident.** Every step is an ARC-Core event with a SHA-256 identity. The live deployment cannot silently rewrite its own history.
-5.  **No seat fee, no credit card.** Cloudflare Workers AI (~10k neurons/day) + Cloudflare Workers (~100k req/day) + GitHub Actions (free for public) + MIT source. One author, one funding pool.
-
-### How to activate the loop end-to-end
-
-Three cross-repo secrets and it's live:
-
-- **`gh-ai-operator` → `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`** — lights up Workers AI as the LLM backend.
-- **`gh-ai-operator` → `PORTFOLIO_WRITE_TOKEN`** — PAT with `issues: write` on Portfolio so verdicts comment back.
-- **`Portfolio` → `AI_OPERATOR_DISPATCH_TOKEN`** — PAT with `Actions: write` on gh-ai-operator so code-review issues trigger the operator.
-- **`ARC-Neuron-LLMBuilder` → `OPERATOR_READ_TOKEN`** — PAT with `Actions: read` on gh-ai-operator so the nightly ingest can download training artifacts.
-
-Everything degrades gracefully if a secret is missing — the affected hop logs a skip and the rest of the loop keeps going.
 
 ---
 
