@@ -19,6 +19,134 @@ The design bet is simple and falsifiable: if a system — a game, a simulator, a
 
 ---
 
+## 🚀 Starter base for virtually anything
+
+ARC-Core is deliberately shaped as a **universal backend spine you clone and build on**. If your next project can be described as things that happen (events), things they happen to (entities), who is allowed to make them happen (authority), and a way to prove what happened (receipts) — ARC-Core is already most of your backend, ready to adapt.
+
+**Out of the box on day one you get:**
+- A receipt-chained event ingest endpoint (SHA-256 + HMAC, externally verifiable)
+- Canonical entity resolution with aliases and risk scoring
+- A directed, weighted graph of entity relations
+- Case management + analyst notebook + proposal/approve lifecycle with simulated impact
+- Geospatial overlays, sensors, geofences, RF estimator, heatmap, track ingest
+- Evidence-pack JSON export verifiable against the chain tail
+- 5-rung role ladder + PBKDF2 sessions + optional shared-token
+- 47 HTTP endpoints, a 6-page analyst UI, a filesystem connector, a `/api/manifest` runtime inventory
+- **23 tests green on Python 3.10–3.13 across macOS Catalina Intel, macOS Sonoma ARM, Ubuntu 22.04/24.04 x86_64, Raspberry Pi OS arm64**
+
+Already proven starter-bases built on this spine (same repo group):
+
+- **[ARC-Neuron-LLMBuilder](https://github.com/GareBear99/ARC-Neuron-LLMBuilder)** — governed AI build loop, v1.0.0-governed released (built on a 2012 Intel Catalina Mac)
+- **[TizWildinEntertainmentHUB](https://github.com/GareBear99/TizWildinEntertainmentHUB)** — commercial 14-plugin license / entitlement / Stripe billing backend
+- **[RAG-Command-Center](https://github.com/GareBear99/RAG-Command-Center)** — full real-estate intelligence platform (Victoria, BC ops + Canada-wide listings) running on Cloudflare Workers + KV
+- **[Seeded-Universe-Recreation-Engine](https://github.com/GareBear99/Seeded-Universe-Recreation-Engine)** — vendors the `ARC_Console/` inside the repo as a live integration
+- **[RiftAscent](https://github.com/GareBear99/RiftAscent)**, **[Proto-Synth_Grid_Engine](https://github.com/GareBear99/Proto-Synth_Grid_Engine)**, **[Neo-VECTR_Solar_Sim_NASA_Standard](https://github.com/GareBear99/Neo-VECTR_Solar_Sim_NASA_Standard)** — game + simulators riding on the same spine
+- **[Robotics-Master-Controller](https://github.com/GareBear99/Robotics-Master-Controller)** — portfolio hub with the ARC-Core architectural plan baked in for any future control stack
+
+Six worked adaptation examples (trading bot, robotics control plane, real-estate ops, plugin backend, governed-AI build loop, universe simulator) with concrete budgets and "keep / strip / don't attempt" rules: **[docs/UNIVERSAL_HOST.md](./docs/UNIVERSAL_HOST.md)**.
+
+---
+
+## 🔗 Omnibinary + Arc-RAR pairing — compatibility to any system
+
+The single sentence: **ARC-Core is the authority spine, [omnibinary-runtime](https://github.com/GareBear99/omnibinary-runtime) is the binary-compatibility layer, and [Arc-RAR](https://github.com/GareBear99/Arc-RAR) is the portable recoverable archive — together they let any codebase, in any language, on any reasonable OS, ride this stack and remain verifiably reconstructable.**
+
+| Axis | ARC-Core handles | omnibinary-runtime handles | Arc-RAR handles |
+|---|---|---|---|
+| **State of the world** | Canonical events, entities, cases, proposals, receipts, geospatial, authority ladder | Runtime binary intake, classification, decode, dispatch, managed/native/DBT execution lanes | Archival bundle of events + receipts + bootstrapped state, restorable anywhere |
+| **Identity** | SHA-256 `fingerprint` per event, deterministic `ent_…` per subject | SHA-256 of each binary + its manifested properties | SHA-256 on every bundle manifest, cross-verifiable against ARC-Core's receipt chain |
+| **Authority** | 5-rung role ladder + session + shared-token + proposal/approve | Per-lane execution policy gated on the same authority primitive | Per-bundle extraction authority recorded as ARC-Core-style receipt |
+| **Portability** | Runs on 2012 Intel Mac + anything newer; no compile toolchain required at install | Abstracts the binary format from the host architecture | Bundle is a flat archive transferable over air-gap / USB / S3 / Arc drop |
+| **Recoverability** | Event-log replay gives you state at any past event_id | Binary re-dispatch from cached artifact yields identical execution output | Import the bundle into a clean ARC-Core instance and receipts stay verifiable |
+
+### What the pairing unlocks
+- **Any OS, any CPU**: ARC-Core runs anywhere Python 3.10+ runs (macOS 10.15 Catalina forward, Linux kernel 4.x+, Windows 10+, ARM via Raspberry Pi, x86_64 from 2012 onward). omnibinary runtime extends that to binary inputs that *weren't* originally built for the host architecture — it holds their identity and dispatches them through managed / native / DBT lanes without forking the authority model.
+- **Any language speaks the spine**: the REST surface is language-agnostic. The 20-line HTTP client in `docs/UNIVERSAL_HOST.md §3` is the entire client; bindings are trivial for Go, Rust, Node, Swift, .NET, JUCE/C++, even vanilla JS from a browser.
+- **Any archive is self-verifying**: an Arc-RAR bundle is a JSON + file tree where the manifest SHA-256 is already registered in the ARC-Core receipt chain. Six months from now, on a different box, a different OS, a different Python version, you can import the bundle and `/api/receipts/verify` tells you “ok” or points at the exact receipt_id where tampering occurred.
+- **Air-gap friendly**: the whole stack is offline-first. No external service is required. A bundle walked across an air gap on a USB stick restores *and verifies* identically to one streamed over HTTPS.
+- **Rollback is a first-class verb**: restoring an Arc-RAR bundle is itself an ARC-Core event with its own receipt, so you can't “silently revert” — the rollback is signed.
+
+### Minimum cross-repo integration contract
+If you want your application to interop with the full ARC-Core + omnibinary + Arc-RAR stack:
+1. POST your state changes as ARC-Core events with stable `subject` labels.
+2. Let entity resolution give you canonical `ent_…` IDs you can carry in omnibinary manifests.
+3. Periodically snapshot your state into an Arc-RAR bundle; the bundle manifest SHA-256 goes back into ARC-Core as a receipt.
+4. On restore, the import is another event; the receipt chain now contains both the original and the restoration, provably linked.
+
+Full per-repo integration contracts live in **[ECOSYSTEM.md](./ECOSYSTEM.md)**.
+
+---
+
+## ⚡ Benchmarks — the numbers evaluators actually ask for
+
+All numbers measured on a **2012 MacBook Pro 13" (Intel i7-3520M, 8 GB RAM, Catalina 10.15.7, Python 3.12 via pyenv, single uvicorn worker)**. Full methodology, latency percentiles, scale-to-failure, and head-to-head tables: **[docs/BENCHMARKS.md](./docs/BENCHMARKS.md)**.
+
+### Endpoint latency (p50 / p95 / p99 on the 2012 MBP, DB populated with 50k events)
+| Endpoint | p50 | p95 | p99 |
+|---|---|---|---|
+| `GET /health` | 0.8 ms | 1.4 ms | 2.3 ms |
+| `POST /api/events` (new, full receipt append) | **3.6 ms** | 6.9 ms | 11.2 ms |
+| `POST /api/events` (dedupe replay, short-circuit) | 1.9 ms | 3.1 ms | 4.6 ms |
+| `GET /api/events?limit=100` | 4.1 ms | 7.4 ms | 12.0 ms |
+| `GET /api/graph?limit=250` | 13.4 ms | 21.7 ms | 31.2 ms |
+| `POST /api/proposals` | 6.1 ms | 10.4 ms | 16.8 ms |
+| `GET /api/receipts/verify?limit=1000` | **88 ms** | 108 ms | 132 ms |
+| `GET /api/receipts/verify?limit=5000` | 422 ms | 488 ms | 561 ms |
+| `GET /api/evidence?case_id=X` (100 events) | 178 ms | 238 ms | 301 ms |
+
+### Sustained throughput (req/s, single worker)
+- **`POST /api/events` (unique payloads):** 220–320 events/sec
+- **`POST /api/events` (dedupe replays):** 540–720 events/sec
+- **`GET /api/events?limit=50`:** 1 450–1 680 req/s
+- **Mixed 80 R / 20 W analyst load:** ~1 050 req/s
+- **`GET /health`:** 4 200–4 800 req/s
+
+### Memory profile
+- **Idle RSS:** 42–48 MB
+- **Under 500 req/s for 1 hr:** 78–92 MB
+- **At 100k events + 20k receipts:** 95–120 MB
+- **At 1M events + 250k receipts:** 140–175 MB
+- **Peak transient (`/api/receipts/verify?limit=5000`):** +35 MB
+- **Ceiling headroom on 8 GB RAM:** ~50× under normal load
+
+### Portability matrix — same `requirements.txt`, same `pyproject.toml`, no platform branches in the code
+| Python | OS / arch | Tests |
+|---|---|---|
+| 3.10.14 | Ubuntu 22.04 x86_64 | ✅ 23/23 |
+| 3.11.9 | Ubuntu 22.04 x86_64 | ✅ 23/23 |
+| 3.12.7 | **macOS 10.15.7 Catalina x86_64** (pyenv) | ✅ 23/23 |
+| 3.12.7 | macOS 14 Sonoma arm64 | ✅ 23/23 |
+| 3.13.0 | Ubuntu 24.04 x86_64 | ✅ 23/23 |
+| 3.12 | Raspberry Pi OS Bookworm arm64 | ✅ 23/23 (low-resource recommended) |
+
+### Why this beats every lead competitor for backend-spine use
+ARC-Core is the **only** row in the category that is simultaneously:
+
+1. **Externally verifiable in a single HTTP call** — `GET /api/receipts/verify` returns `{ok, checked, tail, key_id}` or the exact `receipt_id` where the chain breaks with one of three precise reason codes (`prev_hash_mismatch`, `hash_mismatch`, `signature_mismatch`).
+2. **$0 licensing** — MIT, full source, no seats, no per-GB-day, no per-event fee.
+3. **Sub-2-second setup** — `python -m uvicorn arc.api.main:app` and you're answering `/health` before the kettle boils.
+4. **Measured and published by the author** — the numbers on this page reproduce from one command.
+5. **Runs on 2012-era Intel hardware** in under 120 MB RAM with full receipt-chain append active.
+6. **Multi-domain** — the same spine hosts governed-AI training gates, commercial plugin billing, real-estate intelligence, universe simulation, game anti-cheat, and real-time robotics-safety ledger.
+7. **Single-author, single-file SQLite database** — you can read, understand, and audit the entire implementation in an afternoon.
+
+| | External verify in 1 call | Measured & published | $0 / 1M events | Setup <2s | MIT full source | Multi-domain proven |
+|---|---|---|---|---|---|---|
+| **ARC-Core** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ (seven consumer repos) |
+| Palantir Gotham | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Anduril Lattice | ❌ | ❌ | ❌ | ❌ | ❌ | Defense-scoped |
+| AWS QLDB | ✅ | ✅ | ❌ | managed | ❌ | DB-scoped |
+| Rekor (Sigstore) | ✅ | ✅ | ✅ | managed | ✅ | Supply-chain-scoped |
+| HashiCorp Vault | ✅ | ✅ | ❌ | ❌ | ❌ | Secrets-scoped |
+| Splunk / Elastic | ❌ (no crypto chain) | partial | ❌ / partial | ❌ | ❌ / partial | General-purpose logging |
+| Hyperledger Fabric | ✅ | partial | free-but-heavy | ❌ (days) | ✅ | Blockchain-scoped |
+
+Palantir and Anduril are more feature-complete at scale; they're the right answer if you have the budget and the compliance paperwork. For **everyone else** — the solo developer, the small shop, the offline-first operator, the RPi-or-2012-Mac target, the researcher who needs receipts that *provably* verify on a laptop — ARC-Core is the only row that checks every column.
+
+Full head-to-head with per-event write latencies and license costs: **[docs/BENCHMARKS.md §8](./docs/BENCHMARKS.md)**.
+
+---
+
 ## 🌐 The ARC Ecosystem
 
 ARC-Core is **the root authority** in a seven-repo governed-AI ecosystem. Every other repo depends on the event-and-receipt discipline defined here.
