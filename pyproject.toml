@@ -9,7 +9,7 @@ description = "Signal-intelligence event spine: events, entities, graph, cases, 
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
-authors = [{ name = "Gary Doman", email = "oss@domain.ai" }]
+authors = [{ name = "Gary Doman", email = "gdoman99@gmail.com" }]
 keywords = [
     "signal-intelligence",
     "event-sourcing",

@@ -34,6 +34,14 @@ ARC-Core is the **authority layer** for the ARC ecosystem. Security issues inclu
 3. Develop and test a fix privately.
 4. Publish a coordinated advisory with credit (unless anonymous preferred).
 
+## Receipt signing key
+
+The receipt chain is signed with a 32-byte HMAC key that is a **local secret, never a committed artifact**:
+
+- The code loads it from the `ARC_RECEIPT_SIGNING_KEY` environment variable (base64, exactly 32 bytes) when set, otherwise from `data/keys/receipt_signing.key`, minting a fresh one on first use. The file is git-ignored; the key value is never recorded in the repo, logs, or reports.
+- **Rotation:** set the env var, or delete the key file so a fresh one is minted. Rotating the key invalidates every receipt signed under the old key — verification restarts from `GENESIS`. The current key is `local-hmac-v2`.
+- **History:** a `local-hmac-v1` key was committed to the repository by accident (commit `72846f5`) and rotated out of the working tree. It still exists in git history. Purging it requires a history rewrite (`git filter-repo` + force-push), which is a separate, explicitly-approved step — it is not part of routine rotation.
+
 ## Cross-repo scope
 
 Vulnerabilities that cross into sibling repos should be reported against the sibling's home:

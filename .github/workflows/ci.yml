@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ARC_Console/requirements.txt
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Check no secrets or runtime artifacts are tracked
+        run: |
+          git ls-files | grep -E '\.key$|\.pem$|\.db$|\.zip$|ARC-Core_GitHub_split_bundle' \
+            && { echo 'ERROR: a secret or runtime artifact is tracked'; exit 1; } \
+            || echo 'OK: no secrets or runtime artifacts tracked'

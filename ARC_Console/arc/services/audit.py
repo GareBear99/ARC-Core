@@ -23,30 +23,50 @@ import base64
 import hashlib
 import hmac
 import json
+import os
 import secrets
 from pathlib import Path
-from arc.core.config import KEY_DIR
+from arc.core.config import KEY_DIR, RECEIPT_SIGNING_KEY_B64
 from arc.core.db import connect
 from arc.core.schemas import new_id, utcnow
 
 #: On-disk path to the 32-byte HMAC signing key. Created on first use.
 SIGNING_KEY_PATH = KEY_DIR / "receipt_signing.key"
 #: Identifier recorded on every receipt row for future key-rotation support.
-KEY_ID = "local-hmac-v1"
+#: ``local-hmac-v1`` was the key committed to the repository by accident
+#: (see the rotation note in ``docs/ARCHITECTURE.md`` §8.1); ``v2`` is the
+#: rotated key. Receipts signed under ``v1`` cannot verify under ``v2`` —
+#: rotation restarts the verifiable chain from GENESIS.
+KEY_ID = "local-hmac-v2"
 
 
 def _ensure_signing_key() -> bytes:
-    """Return the HMAC signing key, minting one on first call.
+    """Return the HMAC signing key.
 
-    The key is 32 random bytes from ``secrets.token_bytes``. It's written to
-    ``data/keys/receipt_signing.key`` with default file permissions; operators
-    should tighten those (``chmod 600``) in production.
+    Precedence:
+
+    1. ``ARC_RECEIPT_SIGNING_KEY`` (base64, exactly 32 bytes when decoded)
+       — used as-is and never written to disk. A set-but-invalid value is
+       a hard error: a misconfigured key must not silently fall back.
+    2. ``data/keys/receipt_signing.key`` — read if present, otherwise
+       minted (32 random bytes via ``secrets.token_bytes``) and written
+       with mode ``0o600``. The file is git-ignored and must never be
+       committed; see ``docs/ARCHITECTURE.md`` §8.1.
     """
+    if RECEIPT_SIGNING_KEY_B64:
+        try:
+            key = base64.b64decode(RECEIPT_SIGNING_KEY_B64, validate=True)
+        except Exception as exc:
+            raise ValueError("ARC_RECEIPT_SIGNING_KEY is not valid base64") from exc
+        if len(key) != 32:
+            raise ValueError("ARC_RECEIPT_SIGNING_KEY must decode to exactly 32 bytes")
+        return key
     KEY_DIR.mkdir(parents=True, exist_ok=True)
     if SIGNING_KEY_PATH.exists():
         return SIGNING_KEY_PATH.read_bytes()
     key = secrets.token_bytes(32)
     SIGNING_KEY_PATH.write_bytes(key)
+    os.chmod(SIGNING_KEY_PATH, 0o600)
     return key
 
 

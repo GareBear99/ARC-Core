@@ -40,6 +40,8 @@ __MACOSX/
 ARC_Console/data/*.sqlite
 ARC_Console/data/*.sqlite-journal
 ARC_Console/data/*.db
+ARC_Console/data/*.db-wal
+ARC_Console/data/*.db-shm
 ARC_Console/data/*.log
 !ARC_Console/data/.gitkeep
 
@@ -48,3 +50,8 @@ ARC_Console/data/*.log
 *.pem
 *.p12
 *.pfx
+ARC_Console/data/keys/
+
+# Release / upload artifacts — never part of the source tree
+*.zip
+ARC-Core_GitHub_split_bundle/

@@ -47,6 +47,13 @@ LOW_RESOURCE_MODE = os.getenv("ARC_LOW_RESOURCE_MODE", "0").strip() not in ("", 
 DEMO_MODE = os.getenv("ARC_DEMO_MODE", "1") != "0"
 SHARED_TOKEN = os.getenv("ARC_SHARED_TOKEN", "").strip()
 
+#: Base64-encoded 32-byte HMAC key for the receipt chain
+#: (``ARC_RECEIPT_SIGNING_KEY``). When set, it takes precedence over the
+#: on-disk key file and is never written to disk. When unset, the key is
+#: read from (or minted into) ``data/keys/receipt_signing.key``. See
+#: ``arc/services/audit.py`` and ``docs/ARCHITECTURE.md`` §8.1.
+RECEIPT_SIGNING_KEY_B64 = os.getenv("ARC_RECEIPT_SIGNING_KEY", "").strip()
+
 # Low-resource preset vs. default. Explicit env vars override the preset.
 _DEFAULT_LIMIT_PRESET = 50 if LOW_RESOURCE_MODE else 100
 _MAX_LIMIT_PRESET = 200 if LOW_RESOURCE_MODE else 500
