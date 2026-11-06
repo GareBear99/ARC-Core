@@ -230,3 +230,52 @@ class NoteIn(BaseModel):
             cleaned.append(tag)
         return cleaned
 
+
+def _validate_sha256_hex(value: str | None) -> str | None:
+    """Validate a SHA-256 hex digest: exactly 64 lowercase hex chars.
+
+    Used by the payload-registration models. ``None`` passes through (for
+    optional fields); anything else that is not 64 hex chars raises
+    ``ValueError`` (Pydantic surfaces it as a 422 to the HTTP caller).
+    """
+    if value is None:
+        return None
+    if len(value) != 64 or any(c not in "0123456789abcdef" for c in value.lower()) or value != value.lower():
+        raise ValueError("Must be exactly 64 lowercase hex characters (SHA-256)")
+    return value
+
+
+class PayloadRegisterIn(BaseModel):
+    """Register an ARC-Apache v5 payload manifest with ARC-Core.
+
+    Mirrors ``ARC-Apache/integration/ARC_CORE_ROUTES.py``. ARC-Core is the
+    authority record: registration stores the manifest reference, verifies
+    the optional receipt against the chain, and appends a
+    ``payload.registered`` event + receipt. No blob bytes are ever sent —
+    only hashes + metadata; chunks live in ARC-Apache object storage.
+    """
+
+    manifest_sha256: str = Field(min_length=64, max_length=64)
+    envelope_sha256: str = Field(min_length=64, max_length=64)
+    merkle_root: str = Field(min_length=64, max_length=64)
+    content_class: str = Field(min_length=1, max_length=80)
+    source: str = Field(min_length=1, max_length=120)
+    policy_status: Literal["quarantine", "accepted", "rejected"] = "quarantine"
+    receipt_sha256: str | None = Field(default=None, min_length=64, max_length=64)
+    signature_key_name: str | None = Field(default=None, max_length=120)
+
+    @field_validator("manifest_sha256", "envelope_sha256", "merkle_root", "receipt_sha256")
+    @classmethod
+    def validate_hashes(cls, value: str | None) -> str | None:
+        return _validate_sha256_hex(value)
+
+
+class PayloadRegisterOut(BaseModel):
+    ok: bool
+    arc_event_type: str = "payload.registered"
+    payload_id: str
+    manifest_sha256: str
+    receipt_sha256: str | None = None
+    policy_status: str
+    registered_at: str
+

@@ -76,14 +76,15 @@ ARC-Core is deliberately shaped as a **universal backend spine you clone and bui
 
 **Out of the box on day one you get:**
 - A receipt-chained event ingest endpoint (SHA-256 + HMAC, externally verifiable)
+- ARC-Apache v5 payload registration (`POST /api/payloads/register`, operator role) — the authority record for a manifest: hash validation, receipt verification against the chain, idempotent re-register, and a `payload.registered` event + receipt for every registration
 - Canonical entity resolution with aliases and risk scoring
 - A directed, weighted graph of entity relations
 - Case management + analyst notebook + proposal/approve lifecycle with simulated impact
 - Geospatial overlays, sensors, geofences, RF estimator, heatmap, track ingest
 - Evidence-pack JSON export verifiable against the chain tail
 - 5-rung role ladder + PBKDF2 sessions + optional shared-token
-- 47 HTTP endpoints, a 6-page analyst UI, a filesystem connector, a `/api/manifest` runtime inventory
-- **23 tests green on Python 3.10–3.13 across macOS Catalina Intel, macOS Sonoma ARM, Ubuntu 22.04/24.04 x86_64, Raspberry Pi OS arm64**
+- 50 HTTP endpoints, a 6-page analyst UI, a filesystem connector, a `/api/manifest` runtime inventory
+- **31 tests green on Python 3.10–3.12** (CI) **and 3.10–3.13** (manual matrix: macOS Catalina Intel, macOS Sonoma ARM, Ubuntu 22.04/24.04 x86_64, Raspberry Pi OS arm64)
 
 Already proven starter-bases built on this spine (same repo group):
 

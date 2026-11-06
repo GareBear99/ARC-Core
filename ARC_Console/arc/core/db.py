@@ -120,6 +120,23 @@ CREATE TABLE IF NOT EXISTS receipt_chain (
 CREATE INDEX IF NOT EXISTS idx_receipt_ts ON receipt_chain(ts);
 CREATE INDEX IF NOT EXISTS idx_receipt_record ON receipt_chain(record_type, record_id);
 
+CREATE TABLE IF NOT EXISTS payloads (
+    payload_id TEXT PRIMARY KEY,
+    manifest_sha256 TEXT NOT NULL UNIQUE,
+    envelope_sha256 TEXT NOT NULL,
+    merkle_root TEXT NOT NULL,
+    content_class TEXT NOT NULL,
+    source TEXT NOT NULL,
+    policy_status TEXT NOT NULL,
+    receipt_sha256 TEXT,
+    signature_key_name TEXT,
+    issued_receipt_sha256 TEXT,
+    registered_at TEXT NOT NULL,
+    registered_by_role TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_payloads_source ON payloads(source);
+CREATE INDEX IF NOT EXISTS idx_payloads_registered ON payloads(registered_at DESC);
+
 CREATE TABLE IF NOT EXISTS structures (
     structure_id TEXT PRIMARY KEY,
     name TEXT NOT NULL,

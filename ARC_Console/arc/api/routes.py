@@ -31,11 +31,13 @@ from arc.core.db import connect
 from arc.core.schemas import (
     EventIn, WatchlistIn, CaseIn, ProposalIn, StructureIn, GeofenceIn, TrackEstimateIn,
     BlueprintOverlayIn, CalibrationProfileIn, TrackImportIn, IncidentIn, LoginIn, ConnectorIn, NoteIn,
+    PayloadRegisterIn, PayloadRegisterOut,
 )
 from arc.services.audit import log, list_receipts, verify_receipt_chain
 from arc.services.authn import ensure_bootstrap_admin, login, resolve_session
 from arc.services.connectors import create_connector, list_connectors, poll_connector
 from arc.services.ingest import create_event, list_events
+from arc.services.payloads import get_payload, list_payloads, register_payload
 from arc.services.graph import snapshot
 from arc.services.watchlists import create_watchlist, list_watchlists
 from arc.services.cases import create_case, list_cases, get_case, attach_event
@@ -302,6 +304,45 @@ def get_receipts(limit: int = Query(default=DEFAULT_LIMIT, ge=1, le=MAX_LIMIT)):
 @router.get("/api/receipts/verify")
 def verify_receipts(limit: int | None = Query(default=None, ge=1, le=RECEIPT_VERIFY_MAX)):
     return verify_receipt_chain(limit=limit)
+
+
+@router.post("/api/payloads/register", response_model=PayloadRegisterOut)
+def post_register_payload(payload: PayloadRegisterIn, role: str = Depends(role_operator)):
+    """Register an ARC-Apache v5 payload manifest (authority record).
+
+    Operator role required. Validates the hashes, verifies the optional
+    caller receipt against the chain (400 when unknown), stores the
+    reference, and appends a ``payload.registered`` authority event +
+    receipt. Re-registering the same manifest is idempotent and returns
+    the original record. See ``arc/services/payloads.py``.
+    """
+    try:
+        record = register_payload(payload, actor_role=role)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    log(role, "register_payload", record["payload_id"], record)
+    return PayloadRegisterOut(
+        ok=True,
+        arc_event_type="payload.registered",
+        payload_id=record["payload_id"],
+        manifest_sha256=record["manifest_sha256"],
+        receipt_sha256=record["issued_receipt_sha256"],
+        policy_status=record["policy_status"],
+        registered_at=record["registered_at"],
+    )
+
+
+@router.get("/api/payloads")
+def get_payloads(limit: int = Query(default=DEFAULT_LIMIT, ge=1, le=MAX_LIMIT)):
+    return {"payloads": list_payloads(limit=_bounded(limit))}
+
+
+@router.get("/api/payloads/{manifest_sha256}")
+def get_payload_by_manifest(manifest_sha256: str):
+    try:
+        return get_payload(manifest_sha256)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Payload not registered")
 
 
 @router.post("/api/connectors")

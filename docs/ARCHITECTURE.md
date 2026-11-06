@@ -89,7 +89,7 @@ SQLite with `PRAGMA journal_mode=WAL`, `foreign_keys=ON`, `busy_timeout=15000` m
 `connect()` returns a `sqlite3.Connection` with `Row` factory; callers use `with connect() as conn:` for transactional safety.
 `init_db()` runs the full `SCHEMA` script idempotently.
 
-### 4.1 Tables (17 total)
+### 4.1 Tables (18 total)
 
 **Events & entities**
 - `events(id, ts, event_type, source, subject, object, location, confidence, severity, fingerprint, payload_json)`
@@ -107,6 +107,7 @@ SQLite with `PRAGMA journal_mode=WAL`, `foreign_keys=ON`, `busy_timeout=15000` m
 - `proposals(proposal_id, created_at, status, created_by_role, action, target_type, target_id, rationale, simulation_json, approved_at)`.
 - `audit_log(audit_id, ts, actor_role, action, target, detail_json)` — every mutating route writes here via `audit.log()`.
 - `receipt_chain(receipt_id, ts, record_type, record_id, actor_role, payload_json, prev_hash, hash, signature, key_id)` — the tamper-evident chain; see §8 for protocol.
+- `payloads(payload_id, manifest_sha256 UNIQUE, envelope_sha256, merkle_root, content_class, source, policy_status, receipt_sha256, signature_key_name, issued_receipt_sha256, registered_at, registered_by_role)` — the authority record for ARC-Apache v5 payload manifests; see §11.5 and `arc/services/payloads.py`. `receipt_sha256` is the caller-supplied receipt (verified against the chain when given); `issued_receipt_sha256` is the ARC-Core receipt for the `payload.registered` event.
 
 **Geospatial**
 - `structures(structure_id, name, address, structure_type, levels, polygon_json, center_lat, center_lng, created_at)` — unique on `(name, address)`; `center_lat/lng` are stored denormalized for fast queries, computed via `geometry.centroid`.
@@ -128,8 +129,10 @@ SQLite with `PRAGMA journal_mode=WAL`, `foreign_keys=ON`, `busy_timeout=15000` m
 ## 5. Core Types and Utilities
 
 ### 5.1 Pydantic schemas (`arc/core/schemas.py`)
-18 models. Highlights:
+20 models. Highlights:
 - `EventIn` — `event_type` (1-80 chars), `source` (default `"manual"`, 1-120), `subject` (1-160), optional `object/location` (≤160), `confidence ∈ [0,1]` (default `0.65`), `severity ∈ [1,10]` (default `3`), `payload: dict`, `ts` defaulting to `utcnow()` ISO-8601 UTC.
+- `PayloadRegisterIn` — ARC-Apache v5 manifest registration: `manifest_sha256` / `envelope_sha256` / `merkle_root` (each exactly 64 lowercase hex chars), `content_class`, `source`, `policy_status ∈ {quarantine, accepted, rejected}` (default `quarantine`), optional `receipt_sha256` (64 hex, verified against the chain) and `signature_key_name`.
+- `PayloadRegisterOut` — `{ok, arc_event_type: "payload.registered", payload_id, manifest_sha256, receipt_sha256, policy_status, registered_at}`; `receipt_sha256` is the ARC-Core-issued receipt for the registration.
 - `EventOut` — adds `id` and `fingerprint` (SHA-256 truncated to 24 hex chars).
 - `StructureIn` / `GeofenceIn` both run polygons through `_validate_polygon_points`: ≥3 points, each a `[lat, lng]` pair with `-90≤lat≤90` and `-180≤lng≤180`.
 - `ObservationIn` — `rssi ∈ [-150, 0]`, `reliability ∈ [0,1]` optional.
@@ -222,7 +225,12 @@ This is **deterministic and idempotent** — the same label (or any whitespace/c
 The receipt chain is ARC-Core's tamper-evident ledger.
 
 ### 8.1 Key handling
-`_ensure_signing_key()` creates `data/keys/receipt_signing.key` (32 random bytes via `secrets.token_bytes(32)`) on first call, and returns it thereafter. The file is the HMAC secret for all receipts; `KEY_ID="local-hmac-v1"` is recorded on every receipt row for future key-rotation support.
+`_ensure_signing_key()` returns the 32-byte HMAC secret, in this precedence:
+
+1. **`ARC_RECEIPT_SIGNING_KEY`** (env var, base64, exactly 32 bytes when decoded) — used as-is and never written to disk. A set-but-invalid value is a hard error (no silent fallback).
+2. **`data/keys/receipt_signing.key`** — read if present, otherwise minted (32 random bytes via `secrets.token_bytes(32)`) and written with mode `0o600`. The file is git-ignored and must never be committed.
+
+`KEY_ID="local-hmac-v2"` is recorded on every receipt row. The `v1` key was committed to the repository by accident and was rotated out: the committed file was removed from the working tree and a fresh `v2` key was minted. **Rotation invalidates every receipt signed under the old key** — verification under the new key fails on old rows, so a rotation restarts the verifiable chain from `GENESIS` (a fresh checkout gets a fresh DB + fresh key and all receipts verify). The old key still exists in git history; purging it is a history rewrite and is tracked as a separate step (see `SECURITY.md`).
 
 ### 8.2 Append protocol (`append_receipt`)
 Given a new `(record_type, record_id, actor_role, payload: dict)`:
@@ -315,7 +323,7 @@ Currently one connector type: `filesystem_jsonl`.
 `ensure_demo_connector()` seeds `data/connectors/demo_feed/0001_seed.jsonl` with a presence and a geo_ping event, then registers+polls it.
 
 ## 11. HTTP Surface (`arc/api/routes.py`)
-Total: **47 endpoints**. All mutating routes go through one of the `role_*` Depends guards, which wrap `auth.require_role`.
+Total: **50 endpoints**. All mutating routes go through one of the `role_*` Depends guards, which wrap `auth.require_role`.
 
 ### 11.1 Meta
 - `GET /` → serves `ui/dashboard.html` as `FileResponse`.
@@ -342,7 +350,7 @@ Total: **47 endpoints**. All mutating routes go through one of the `role_*` Depe
 - `GET /api/cases` / `GET /api/cases/{case_id}` — includes events and notes.
 - `POST /api/cases/{case_id}/attach/{event_id}` (analyst) — idempotent; **404** on missing case or event.
 
-### 11.5 Proposals / Simulate / Audit / Receipts
+### 11.5 Proposals / Simulate / Audit / Receipts / Payloads
 - `POST /api/proposals` (operator) body `ProposalIn` — looks up target's risk, simulates, persists, audits.
 - `POST /api/proposals/{id}/approve` (approver) — **404** if missing.
 - `GET /api/proposals` — list including deserialized simulation.
@@ -350,6 +358,9 @@ Total: **47 endpoints**. All mutating routes go through one of the `role_*` Depe
 - `GET /api/audit?limit` → recent audit rows with deserialized detail.
 - `GET /api/receipts?limit` → recent receipts.
 - `GET /api/receipts/verify?limit` → see §8.3; **200** with `{ok:true/false, ...}`.
+- `POST /api/payloads/register` (operator) body `PayloadRegisterIn` → registers an ARC-Apache v5 payload manifest (authority record); **400** when a supplied `receipt_sha256` is not in the chain; **422** on a malformed hash. Idempotent — re-registering the same manifest returns the original record. Appends a `payload.registered` event + receipt; see `arc/services/payloads.py`.
+- `GET /api/payloads?limit` → most recently registered payloads, newest first.
+- `GET /api/payloads/{manifest_sha256}` → one payload; **404** if not registered.
 
 ### 11.6 Evidence / Notes / Connectors / Incidents
 - `GET /api/evidence?case_id&subject` — requires at least one; returns the evidence pack (§9.5). **400** if neither.
@@ -402,21 +413,23 @@ Example: analyst posts `{event_type:"transfer", source:"manual", subject:"Drone-
 
 Any subsequent POST with identical content returns the same EventOut (dedupe via fingerprint). The receipt chain grows by one row per *unique* event.
 
-## 13. Tests (`ARC_Console/tests/` — 13 tests, all passing)
-- `test_arc_smoke.py` — 62 lines. End-to-end smoke through events, watchlists, cases, proposals, graph, audit. Covers happy-path for the core analyst loop.
-- `test_geo_workflow.py` — 39 lines. Structure → sensors → track estimate with fake observations; asserts point-in-polygon clamping and geofence-hit reporting.
-- `test_geo_v4_features.py` — 67 lines. Blueprint overlay upsert, calibration profile upsert (uniqueness on `(structure_id, name)`), heatmap grid sizing, import_tracks bulk path.
-- `test_v5_hardening.py` — 48 lines. Input-range enforcement: polygon validation rejections, RSSI out-of-range, negative-floor bounds, too-many-observations rejection.
-- `test_v6_ops.py` — 49 lines. Receipt-chain verification happy path + detection of out-of-band tampering by mutating a receipt row and re-running `verify_receipt_chain`.
+## 13. Tests (`ARC_Console/tests/` — 31 tests, all passing)
+- `test_arc_smoke.py` — end-to-end smoke through events, watchlists, cases, proposals, graph, audit. Covers happy-path for the core analyst loop.
+- `test_geo_workflow.py` — structure → sensors → track estimate with fake observations; asserts point-in-polygon clamping and geofence-hit reporting.
+- `test_geo_v4_features.py` — blueprint overlay upsert, calibration profile upsert (uniqueness on `(structure_id, name)`), heatmap grid sizing, import_tracks bulk path.
+- `test_v5_hardening.py` — input-range enforcement: polygon validation rejections, RSSI out-of-range, negative-floor bounds, too-many-observations rejection.
+- `test_v6_ops.py` — receipt-chain verification happy path + detection of out-of-band tampering by mutating a receipt row and re-running `verify_receipt_chain`.
+- `test_hardware_floor.py` — the hardware-floor contract: runtime caps surface in `/api/manifest`, low-resource mode, and the portability matrix.
+- `test_payloads_register.py` — ARC-Apache v5 payload registration: happy path, idempotent re-register, hash validation (422), unknown receipt (400), operator role guard (403), known-receipt + accepted policy, GET by manifest (404 when unknown), and the receipt chain verifying after a registration.
 
-`conftest.py` wires a TestClient using `run_arc.app`; `_client.py` is a helper that ensures a fresh `data/arc_core.db` per test run.
-Run with `pytest -q` from `ARC_Console/`.
+`conftest.py` wires the `anyio_backend` fixture; `_client.py` builds the `httpx.ASGITransport` for the real app. Tests run against the real SQLite DB, seeded idempotently by `seed_demo()` in each file's `setup_module` — a fresh checkout (no DB, no key file) regenerates both on first run.
+Run with `pytest -q` from `ARC_Console/`, or `make test` from the repo root. CI (`.github/workflows/ci.yml`) runs the suite on Python 3.10/3.11/3.12.
 
 ## 14. Non-goals and Known Limits (v6.0.0)
 - **No WebSocket / SSE** — every UI refresh is a GET poll. Designed for analyst pacing, not high-frequency telemetry.
 - **No multi-tenant isolation** — a single SQLite file, one admin user family. Multi-team deployments need upstream isolation (reverse proxy + one DB per tenant).
 - **No FTS5 on events** — `list_events(q=...)` is LIKE over multiple columns. Fine to ~10⁶ events on commodity disks; switch to FTS5 for larger deployments.
-- **No automatic key rotation** — `KEY_ID="local-hmac-v1"` is hard-coded. Rotation requires migrating `receipt_chain` or appending a rotation record (not yet implemented).
+- **Key rotation invalidates prior receipts** — rotating the signing key (env var `ARC_RECEIPT_SIGNING_KEY`, or deleting `data/keys/receipt_signing.key` so a fresh one is minted) restarts the verifiable chain from `GENESIS`. There is no re-signing of old rows; a rotation is a deliberate break, not a migration. See §8.1.
 - **Demo calibration is not applied in the estimator** — `calibration_profiles` stores `path_loss/noise_db/smoothing` but `estimator.py::rssi_from_distance_meters` currently uses constants. A future version will thread the profile through.
 - **Risk does not decay** — entity `risk_score` is monotonic per `MAX(old, new)`. If an entity's situation de-escalates, score stays high unless an operator action resets it (no reset endpoint today).
 - **Connector ecosystem is minimal** — only `filesystem_jsonl`. HTTP / S3 / syslog connectors are planned as separate connector_type values backed by the same `connector_sources` + `connector_runs` schema.
